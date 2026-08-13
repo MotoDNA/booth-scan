@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#EFEAE0">
+<title>부스 접수대 · K-print 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{
+  --paper:#EFEAE0;--paper2:#E4DDCE;--slip:#FDFCF8;--ink:#1B1A17;
+  --muted:#8A8378;--rule:#CFC6B4;--stamp:#C8342A;--ok:#2F6B4F;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  background-image:repeating-linear-gradient(0deg,rgba(27,26,23,.02) 0 1px,transparent 1px 3px);
+  color:var(--ink);font-size:16px;line-height:1.45;
+  font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+}
+button,input,textarea,select{font-family:inherit;font-size:16px}
+button{cursor:pointer}
+
+header{padding:14px 18px 11px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted)}
+h1{margin:1px 0 0;font-size:21px;font-weight:800;letter-spacing:-.02em}
+.who{font-size:11px;color:var(--muted);margin-top:3px}
+.who b{color:var(--stamp)}
+.cnt{text-align:right;line-height:1}
+.cnt b{font-family:var(--mono);font-size:32px;font-weight:700;letter-spacing:-.04em}
+.cnt span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--muted)}
+
+nav{display:flex;background:var(--paper2);border-bottom:1px solid var(--rule)}
+nav button{flex:1;background:none;border:0;padding:12px 2px;font-size:13px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--stamp)}
+main{padding:16px}
+section[hidden]{display:none}
+
+/* 촬영 */
+.shoot{
+  display:block;width:100%;border:2px solid var(--ink);background:var(--ink);color:var(--paper);
+  padding:26px 16px;border-radius:2px;text-align:center;
+}
+.shoot b{display:block;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.shoot span{display:block;font-size:12px;opacity:.7;margin-top:5px}
+.shoot:disabled{opacity:.5}
+
+.card{background:var(--slip);border:1px solid var(--rule);border-radius:2px;padding:14px;margin-top:14px;position:relative}
+.card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:4px;background:repeating-linear-gradient(90deg,var(--rule) 0 5px,transparent 5px 10px)}
+.shot{width:100%;border:1px solid var(--rule);border-radius:2px;display:block;background:#ddd}
+.fld{margin-top:11px}
+.fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:4px}
+.fld input,.fld textarea{width:100%;border:0;border-bottom:1px solid var(--rule);background:transparent;padding:7px 2px;color:var(--ink)}
+.fld textarea{border:1px solid var(--rule);border-radius:2px;padding:8px;resize:vertical;min-height:58px}
+.fld input:focus,.fld textarea:focus{outline:0;border-bottom-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chips button{padding:8px 11px;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.chips button[aria-pressed=true]{background:var(--ink);color:var(--slip);border-color:var(--ink)}
+.grade{display:flex;gap:6px;margin-top:6px}
+.grade button{flex:1;padding:11px 0;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.grade button[aria-pressed=true]{background:var(--stamp);color:#fff;border-color:var(--stamp)}
+.save{display:block;width:100%;margin-top:14px;padding:16px;background:var(--ok);color:#fff;border:0;border-radius:2px;font-size:16px;font-weight:800}
+.ghost{display:block;width:100%;margin-top:8px;padding:12px;background:transparent;color:var(--muted);border:1px solid var(--rule);border-radius:2px;font-size:13px;font-weight:600}
+.ai{font-size:12px;color:var(--muted);margin-top:9px;display:flex;align-items:center;gap:6px;min-height:18px}
+.ai.on{color:var(--ok);font-weight:600}
+.ai.err{color:var(--stamp)}
+.spin{width:11px;height:11px;border:2px solid var(--rule);border-top-color:var(--ink);border-radius:50%;animation:sp .7s linear infinite;flex:0 0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* 명부 */
+.slip{background:var(--slip);border:1px solid var(--rule);border-radius:2px;padding:12px;margin-bottom:11px;display:flex;gap:11px}
+.slip img{width:74px;height:96px;object-fit:cover;border:1px solid var(--rule);flex:0 0 auto;background:#eee}
+.slip .body{flex:1;min-width:0}
+.slip .no{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+.slip h3{margin:3px 0 1px;font-size:15px;font-weight:800;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slip .sub{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slip .tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+.slip .tags i{font-style:normal;font-size:10.5px;font-weight:700;padding:3px 6px;border:1px solid var(--rule);border-radius:2px;color:var(--muted)}
+.slip .tags i.g{background:var(--stamp);color:#fff;border-color:var(--stamp)}
+.slip .m{margin-top:6px;font-size:12.5px;color:var(--ink);opacity:.8;word-break:break-word}
+.slip .acts{display:flex;gap:8px;margin-top:8px}
+.slip .acts button{flex:1;padding:7px 0;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.slip .acts .del{color:var(--stamp);flex:0 0 44px}
+
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:9px;padding:11px 13px calc(11px + env(safe-area-inset-bottom));background:var(--paper2);border-top:2px solid var(--ink)}
+.bar button{flex:1;padding:13px 0;border:1px solid var(--ink);background:transparent;border-radius:2px;font-size:13.5px;font-weight:700;color:var(--ink)}
+.bar button.primary{background:var(--ink);color:var(--paper)}
+.empty{text-align:center;color:var(--muted);padding:48px 18px;font-size:13.5px;line-height:1.8}
+.empty b{display:block;font-size:15.5px;color:var(--ink);margin-bottom:5px}
+.note{font-size:12px;color:var(--muted);line-height:1.65;border-left:2px solid var(--rule);padding-left:10px;margin:14px 0 0}
+.warn{background:#FBE9E7;border:1px solid var(--stamp);color:#8C231B;padding:10px 12px;border-radius:2px;font-size:12.5px;line-height:1.6;margin-bottom:14px}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--paper);padding:11px 17px;border-radius:2px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+.flash{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(239,234,224,.93);animation:fo .9s ease-out forwards;pointer-events:none}
+.flash div{border:5px solid var(--stamp);color:var(--stamp);border-radius:6px;padding:12px 24px;font-size:28px;font-weight:800;letter-spacing:.14em;transform:rotate(-11deg) scale(1.8);opacity:0;animation:pr .34s cubic-bezier(.2,.9,.25,1.1) forwards}
+.flash div small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.18em;font-weight:400;margin-top:3px}
+@keyframes pr{to{transform:rotate(-11deg) scale(1);opacity:.92}}
+@keyframes fo{0%,60%{opacity:1}100%{opacity:0}}
+.setrow{background:var(--slip);border:1px solid var(--rule);border-radius:2px;padding:13px;margin-bottom:12px}
+.setrow h4{margin:0 0 3px;font-size:14px;font-weight:800}
+.setrow p{margin:0 0 9px;font-size:12px;color:var(--muted);line-height:1.6}
+.setrow input{width:100%;border:1px solid var(--rule);border-radius:2px;padding:10px;background:var(--paper)}
+.setrow button{margin-top:9px;padding:11px 16px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:2px;font-size:13px;font-weight:700}
+.setrow button.sec{background:transparent;color:var(--ink)}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="eyebrow">K-PRINT 2026 · KINTEX</div>
+    <h1>부스 접수대</h1>
+    <div class="who">담당자 <b id="staffName">미설정</b></div>
+  </div>
+  <div class="cnt"><b id="count">0</b><span>접수</span></div>
+</header>
+
+<nav role="tablist">
+  <button role="tab" id="t-new" aria-selected="true">접수</button>
+  <button role="tab" id="t-list" aria-selected="false">명부</button>
+  <button role="tab" id="t-set" aria-selected="false">설정</button>
+</nav>
+
+<main>
+<section id="p-new">
+  <div class="warn" id="storeWarn" hidden>저장 기능이 작동하지 않는 환경입니다. 지금 기록하면 화면을 닫는 순간 사라집니다. 반드시 배포한 주소(https://)에서 사용하세요.</div>
+  <input type="file" id="cam" accept="image/*" capture="environment" hidden>
+  <button class="shoot" id="shootBtn"><b>방문증 촬영</b><span>휴대폰 카메라가 열립니다</span></button>
+
+  <div class="card" id="draft" hidden>
+    <img class="shot" id="preview" alt="촬영한 방문증">
+    <div class="ai" id="aiStatus"></div>
+    <div class="fld"><label>회사명</label><input id="f-company" placeholder="예: 액티바코리아"></div>
+    <div class="fld"><label>이름 / 직함</label><input id="f-name" placeholder="예: 최환준 부장"></div>
+    <div class="fld"><label>관심 품목</label>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="fld"><label>상담 메모</label><textarea id="f-memo" placeholder="샘플 요청, 단가 문의, 재방문 약속 등"></textarea></div>
+    <div class="fld"><label>등급</label>
+      <div class="grade" id="grade">
+        <button data-g="A" aria-pressed="false">A 즉시상담</button>
+        <button data-g="B" aria-pressed="false">B 관심</button>
+        <button data-g="C" aria-pressed="false">C 단순방문</button>
+      </div>
+    </div>
+    <button class="save" id="saveBtn">명부에 접수</button>
+    <button class="ghost" id="cancelBtn">취소하고 버리기</button>
+  </div>
+
+  <p class="note">사진과 메모는 이 휴대폰 안에만 저장됩니다. 매일 마감 후 <b>CSV 내보내기</b>로 백업하세요.</p>
+</section>
+
+<section id="p-list" hidden><div id="slips"></div></section>
+
+<section id="p-set" hidden>
+  <div class="setrow">
+    <h4>담당자 이름</h4>
+    <p>여러 명이 나눠 쓸 때 누가 받은 리드인지 구분합니다. CSV에 함께 기록됩니다.</p>
+    <input id="s-staff" placeholder="예: 최환준">
+    <button id="s-staffSave">저장</button>
+  </div>
+  <div class="setrow">
+    <h4>자동 인식 (선택)</h4>
+    <p>Claude API 키를 넣으면 촬영 즉시 회사명과 이름을 자동으로 채웁니다. 키는 이 휴대폰에만 저장되고 어디로도 전송되지 않습니다. 비워 두면 손으로 입력하는 방식으로 동작합니다.</p>
+    <input id="s-key" type="password" placeholder="sk-ant-... (선택 사항)" autocomplete="off">
+    <input id="s-model" placeholder="claude-sonnet-5" style="margin-top:8px">
+    <button id="s-test">키 연결 확인</button>
+    <button class="sec" id="s-keySave">저장</button>
+    <div class="ai" id="testStatus"></div>
+  </div>
+  <div class="setrow">
+    <h4>저장 상태</h4>
+    <p id="usage">계산 중…</p>
+    <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
+  </div>
+</section>
+</main>
+
+<div class="bar">
+  <button class="primary" id="exCsv">CSV 내보내기</button>
+  <button id="exZip">사진 전체 저장</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ITEMS=['친환경 특수지','습식 PU 커버','샘플 요청','견적 요청','해외 바이어','동종업계'];
+const $=i=>document.getElementById(i);
+let rows=[], draft=null, cfg={staff:'',key:'',model:'claude-sonnet-5'};
+
+/* ───── 설정 저장 (작은 값) ───── */
+function cfgLoad(){try{const v=localStorage.getItem('kp-cfg');if(v)cfg={...cfg,...JSON.parse(v)}}catch(e){}}
+function cfgSave(){try{localStorage.setItem('kp-cfg',JSON.stringify(cfg))}catch(e){}}
+
+/* ───── 기록 저장 (IndexedDB · 사진 포함) ───── */
+let db=null, memOnly=false;
+function openDB(){
+  return new Promise(res=>{
+    try{
+      const r=indexedDB.open('kprint2026',1);
+      r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('recs'))d.createObjectStore('recs',{keyPath:'id'})};
+      r.onsuccess=e=>{db=e.target.result;res(true)};
+      r.onerror=()=>{memOnly=true;res(false)};
+    }catch(e){memOnly=true;res(false)}
+  });
+}
+function tx(mode){return db.transaction('recs',mode).objectStore('recs')}
+function dbAll(){return new Promise(res=>{if(!db)return res([]);const q=tx('readonly').getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])})}
+function dbPut(r){return new Promise(res=>{if(!db)return res();const q=tx('readwrite').put(r);q.onsuccess=()=>res();q.onerror=()=>res()})}
+function dbDel(id){return new Promise(res=>{if(!db)return res();const q=tx('readwrite').delete(id);q.onsuccess=()=>res();q.onerror=()=>res()})}
+function dbClear(){return new Promise(res=>{if(!db)return res();const q=tx('readwrite').clear();q.onsuccess=()=>res();q.onerror=()=>res()})}
+
+/* ───── 유틸 ───── */
+const pad=n=>String(n).padStart(3,'0');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2000)}
+function nowStr(){const d=new Date(),p=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())}
+function stamp(txt){const d=document.createElement('div');d.className='flash';
+  d.innerHTML='<div>접수<small>'+txt+'</small></div>';document.body.appendChild(d);
+  setTimeout(()=>d.remove(),950); if(navigator.vibrate)navigator.vibrate(55)}
+
+/* 사진 압축 */
+function shrink(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{
+      const im=new Image();
+      im.onload=()=>{
+        const M=1100, s=Math.min(1,M/Math.max(im.width,im.height));
+        const c=document.createElement('canvas');
+        c.width=Math.round(im.width*s); c.height=Math.round(im.height*s);
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+        c.toBlob(b=>b?res(b):rej('압축 실패'),'image/jpeg',0.62);
+      };
+      im.onerror=()=>rej('이미지를 읽지 못했습니다');
+      im.src=fr.result;
+    };
+    fr.onerror=()=>rej('파일을 읽지 못했습니다');
+    fr.readAsDataURL(file);
+  });
+}
+function blobToB64(b){return new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(b)})}
+
+/* ───── 자동 인식 ───── */
+async function readBadge(blob){
+  const s=$('aiStatus');
+  if(!cfg.key){s.className='ai';s.textContent='자동 인식 꺼짐 — 아래에 직접 입력하세요';return}
+  s.className='ai';s.innerHTML='<span class="spin"></span>방문증 글자를 읽는 중…';
+  try{
+    const b64=await blobToB64(blob);
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'content-type':'application/json','x-api-key':cfg.key,
+        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:cfg.model||'claude-sonnet-5',max_tokens:300,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
+          {type:'text',text:'전시회 방문증 사진입니다. 인쇄된 글자에서 회사명과 사람 이름·직함을 읽어 주세요. 오직 JSON만 출력하고 다른 말은 쓰지 마세요. 형식: {"company":"회사명","name":"이름 직함"} 읽을 수 없으면 빈 문자열로 두세요.'}
+        ]}]})
+    });
+    if(!r.ok){const e=await r.text();throw new Error(r.status+' '+e.slice(0,120))}
+    const d=await r.json();
+    const txt=(d.content||[]).map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    const j=JSON.parse(txt.slice(txt.indexOf('{'),txt.lastIndexOf('}')+1));
+    if(j.company)$('f-company').value=j.company;
+    if(j.name)$('f-name').value=j.name;
+    s.className='ai on';s.textContent='자동으로 채웠습니다 — 틀린 곳은 고쳐 주세요';
+  }catch(err){
+    s.className='ai err';s.textContent='자동 인식 실패 — 직접 입력하세요 ('+String(err.message||err).slice(0,60)+')';
+  }
+}
+
+/* ───── 촬영 ───── */
+$('shootBtn').addEventListener('click',()=>$('cam').click());
+$('cam').addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0]; e.target.value='';
+  if(!f)return;
+  try{
+    const blob=await shrink(f);
+    draft={blob,grade:'',items:[]};
+    $('preview').src=URL.createObjectURL(blob);
+    $('draft').hidden=false;
+    $('f-company').value='';$('f-name').value='';$('f-memo').value='';
+    renderChips();renderGrade();
+    $('draft').scrollIntoView({behavior:'smooth',block:'start'});
+    readBadge(blob);
+  }catch(err){toast(String(err))}
+});
+
+function renderChips(){
+  $('chips').innerHTML=ITEMS.map(i=>
+    `<button data-i="${esc(i)}" aria-pressed="${draft&&draft.items.includes(i)}">${esc(i)}</button>`).join('');
+}
+function renderGrade(){
+  [...$('grade').children].forEach(b=>b.setAttribute('aria-pressed',String(draft&&draft.grade===b.dataset.g)));
+}
+$('chips').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||!draft)return;
+  const i=b.dataset.i;
+  draft.items=draft.items.includes(i)?draft.items.filter(x=>x!==i):[...draft.items,i];
+  renderChips();
+});
+$('grade').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||!draft)return;
+  draft.grade=draft.grade===b.dataset.g?'':b.dataset.g;renderGrade();
+});
+$('cancelBtn').addEventListener('click',()=>{draft=null;$('draft').hidden=true});
+
+$('saveBtn').addEventListener('click',async()=>{
+  if(!draft)return;
+  const rec={id:Date.now(),at:nowStr(),staff:cfg.staff||'',
+    company:$('f-company').value.trim(),name:$('f-name').value.trim(),
+    items:draft.items,grade:draft.grade,memo:$('f-memo').value.trim(),photo:draft.blob};
+  if(!rec.company&&!rec.name&&!rec.memo){
+    if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
+  }
+  rows.unshift(rec); await dbPut(rec);
+  stamp(pad(rows.length)+' 번');
+  draft=null;$('draft').hidden=true;render();usage();
+});
+
+/* ───── 명부 ───── */
+function render(){
+  $('count').textContent=rows.length;
+  $('staffName').textContent=cfg.staff||'미설정';
+  const box=$('slips');
+  if(!rows.length){
+    box.innerHTML='<div class="empty"><b>아직 접수된 방문객이 없습니다.</b>접수 탭에서 방문증을 촬영하면<br>여기에 순서대로 쌓입니다.</div>';return;
+  }
+  box.innerHTML=rows.map((r,idx)=>{
+    const no=rows.length-idx;
+    return `<article class="slip" data-id="${r.id}">
+      <img src="${r.photo?URL.createObjectURL(r.photo):''}" alt="방문증">
+      <div class="body">
+        <div class="no"><span>NO.${pad(no)}</span><span>${esc(r.at)}${r.staff?' · '+esc(r.staff):''}</span></div>
+        <h3>${esc(r.company||'(회사명 없음)')}</h3>
+        <div class="sub">${esc(r.name||'—')}</div>
+        <div class="tags">${r.grade?`<i class="g">${r.grade}</i>`:''}${(r.items||[]).map(i=>`<i>${esc(i)}</i>`).join('')}</div>
+        ${r.memo?`<div class="m">${esc(r.memo)}</div>`:''}
+        <div class="acts"><button class="edit">수정</button><button class="del">삭제</button></div>
+      </div></article>`;
+  }).join('');
+}
+$('slips').addEventListener('click',async e=>{
+  const s=e.target.closest('.slip');if(!s)return;
+  const r=rows.find(x=>x.id==s.dataset.id);if(!r)return;
+  if(e.target.classList.contains('del')){
+    if(!confirm('이 기록을 삭제합니다. 사진도 함께 지워집니다.'))return;
+    rows=rows.filter(x=>x.id!==r.id);await dbDel(r.id);render();usage();return;
+  }
+  if(e.target.classList.contains('edit')){
+    const c=prompt('회사명',r.company||'');if(c===null)return;
+    const n=prompt('이름 / 직함',r.name||'');if(n===null)return;
+    const m=prompt('상담 메모',r.memo||'');if(m===null)return;
+    r.company=c.trim();r.name=n.trim();r.memo=m.trim();
+    await dbPut(r);render();toast('수정했습니다');
+  }
+});
+
+/* ───── 탭 ───── */
+['new','list','set'].forEach(k=>$('t-'+k).addEventListener('click',()=>{
+  ['new','list','set'].forEach(x=>{$('t-'+x).setAttribute('aria-selected',String(x===k));$('p-'+x).hidden=x!==k});
+  if(k==='set')usage();
+}));
+
+/* ───── 설정 ───── */
+$('s-staffSave').addEventListener('click',()=>{cfg.staff=$('s-staff').value.trim();cfgSave();render();toast('담당자를 저장했습니다')});
+$('s-keySave').addEventListener('click',()=>{cfg.key=$('s-key').value.trim();cfg.model=$('s-model').value.trim()||'claude-sonnet-5';cfgSave();toast('저장했습니다')});
+$('s-test').addEventListener('click',async()=>{
+  const k=$('s-key').value.trim(), m=$('s-model').value.trim()||'claude-sonnet-5';
+  const s=$('testStatus');
+  if(!k){s.className='ai err';s.textContent='키를 먼저 입력하세요';return}
+  s.className='ai';s.innerHTML='<span class="spin"></span>확인 중…';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'content-type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:m,max_tokens:10,messages:[{role:'user',content:'ok 이라고만 답하세요'}]})});
+    if(!r.ok)throw new Error((await r.text()).slice(0,140));
+    cfg.key=k;cfg.model=m;cfgSave();
+    s.className='ai on';s.textContent='연결 성공 — 자동 인식이 켜졌습니다';
+  }catch(e){s.className='ai err';s.textContent='실패: '+String(e.message||e).slice(0,120)}
+});
+async function usage(){
+  let b=0;rows.forEach(r=>{if(r.photo)b+=r.photo.size});
+  let q='';
+  try{const est=await navigator.storage.estimate();if(est&&est.quota)q=' · 사용 가능 약 '+Math.round(est.quota/1048576)+'MB'}catch(e){}
+  $('usage').textContent='기록 '+rows.length+'건 · 사진 '+(b/1048576).toFixed(1)+'MB'+q;
+}
+$('s-wipe').addEventListener('click',async()=>{
+  if(!rows.length)return;
+  if(!confirm('기록 '+rows.length+'건과 사진을 모두 삭제합니다. 되돌릴 수 없습니다.\n\nCSV와 사진을 먼저 내보냈는지 확인하세요.'))return;
+  if(!confirm('정말 삭제할까요?'))return;
+  rows=[];await dbClear();render();usage();toast('전체 삭제했습니다');
+});
+
+/* ───── 내보내기 ───── */
+function dl(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+const today=()=>new Date().toISOString().slice(0,10);
+$('exCsv').addEventListener('click',()=>{
+  if(!rows.length){toast('내보낼 기록이 없습니다');return}
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const list=[...rows].reverse();
+  const csv='\uFEFF'+['번호,접수시각,담당자,회사명,이름직함,등급,관심품목,메모,사진파일명']
+    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.grade,(r.items||[]).join(' / '),r.memo,
+      pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
+    .join('\r\n');
+  dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'kprint2026_명부_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
+  toast('CSV를 저장했습니다');
+});
+$('exZip').addEventListener('click',async()=>{
+  if(!rows.length){toast('내보낼 사진이 없습니다');return}
+  if(typeof JSZip==='undefined'){toast('압축 기능을 불러오지 못했습니다 (인터넷 확인)');return}
+  toast('사진을 묶는 중…');
+  const zip=new JSZip(), list=[...rows].reverse();
+  list.forEach((r,i)=>{if(r.photo)zip.file(pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg',r.photo)});
+  const b=await zip.generateAsync({type:'blob'});
+  dl(b,'kprint2026_사진_'+(cfg.staff||'담당자')+'_'+today()+'.zip');
+  toast('사진을 저장했습니다');
+});
+
+/* ───── 시작 ───── */
+(async()=>{
+  cfgLoad();
+  $('s-staff').value=cfg.staff; $('s-key').value=cfg.key; $('s-model').value=cfg.model;
+  const ok=await openDB();
+  if(!ok)$('storeWarn').hidden=false;
+  rows=(await dbAll()).sort((a,b)=>b.id-a.id);
+  render(); usage(); renderChips();
+  if(!cfg.staff){$('t-set').click();toast('먼저 담당자 이름을 설정하세요')}
+})();
+</script>
+</body>
+</html>
