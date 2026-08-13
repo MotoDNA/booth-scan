@@ -422,6 +422,8 @@ section[hidden]{display:none}
   <div class="setrow">
     <h4 data-i18n="sUsageH">저장 상태</h4>
     <p id="usage">계산 중…</p>
+    <button class="sec" id="s-diag" style="width:100%;margin-bottom:9px">저장소 진단</button>
+    <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
   <div class="ver">Ver 1.0.0</div>
@@ -624,7 +626,7 @@ function openDB(){
       const r=indexedDB.open('kprint2026',1);
       r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('recs'))d.createObjectStore('recs',{keyPath:'id'})};
       r.onsuccess=e=>{db=e.target.result;res(true)};
-      r.onerror=()=>{memOnly=true;res(false)};
+      r.onerror=()=>{memOnly=true;lastDbError='open: '+((r.error&&r.error.message)||'unknown');res(false)};
       r.onblocked=()=>{memOnly=true;res(false)};
     }catch(e){memOnly=true;res(false)}
   });
@@ -639,8 +641,8 @@ async function dbPut(r){
   await openDB();
   return new Promise(res=>{
     if(!db){toast(t('tNoStore'));return res(false)}
-    try{const q=tx('readwrite').put(r);q.onsuccess=()=>res(true);q.onerror=()=>{toast(t('tNoStore'));res(false)}}
-    catch(e){toast(t('tNoStore'));res(false)}
+    try{const q=tx('readwrite').put(r);q.onsuccess=()=>res(true);q.onerror=()=>{lastDbError='put: '+((q.error&&q.error.message)||'unknown');toast(t('tNoStore'));res(false)}}
+    catch(e){lastDbError='put: '+e.message;toast(t('tNoStore'));res(false)}
   });
 }
 async function dbDel(id){
@@ -651,6 +653,53 @@ async function dbClear(){
   await openDB();
   return new Promise(res=>{if(!db)return res();const q=tx('readwrite').clear();q.onsuccess=()=>res();q.onerror=()=>res()});
 }
+
+
+/* ═════ 예비 저장소 (IndexedDB 실패 대비) ═════
+   사진을 뺀 글자 정보만 별도로 한 벌 더 보관합니다. */
+const MIRROR='kprint2026-mirror';
+let lastDbError='';
+function mirrorSave(){
+  try{
+    const lite=rows.map(r=>{const o={...r};delete o.photo;return o});
+    localStorage.setItem(MIRROR,JSON.stringify(lite));
+    return true;
+  }catch(e){ lastDbError=lastDbError||('mirror: '+e.message); return false; }
+}
+function mirrorLoad(){
+  try{ const v=localStorage.getItem(MIRROR); return v?JSON.parse(v):[] }catch(e){ return [] }
+}
+
+/* 저장소 진단 */
+$('s-diag').addEventListener('click',async()=>{
+  const o=$('diagOut'); o.className='ai'; o.innerHTML='<span class="spin"></span>확인 중…';
+  const L=[];
+  L.push('IndexedDB 사용 가능: '+(('indexedDB' in window)?'예':'아니오'));
+  const ok=await openDB();
+  L.push('저장소 열기: '+(ok?'성공':'실패'));
+  let cnt='-';
+  try{ cnt=(await dbAll()).length }catch(e){ cnt='읽기 실패' }
+  L.push('저장소에 있는 기록: '+cnt+'건');
+  L.push('화면에 있는 기록: '+rows.length+'건');
+  L.push('예비 저장본: '+mirrorLoad().length+'건');
+  // 쓰기 시험
+  try{
+    const testId=-999999;
+    await new Promise((res,rej)=>{
+      if(!db)return rej(new Error('db 없음'));
+      const q=tx('readwrite').put({id:testId,test:1});
+      q.onsuccess=()=>res(); q.onerror=()=>rej(q.error||new Error('put 실패'));
+    });
+    await dbDel(testId);
+    L.push('쓰기 시험: 성공');
+  }catch(e){ L.push('쓰기 시험: 실패 ('+(e.message||e)+')') }
+  try{
+    const est=await navigator.storage.estimate();
+    L.push('여유 공간: 약 '+Math.round((est.quota-est.usage)/1048576)+'MB');
+  }catch(e){}
+  if(lastDbError)L.push('마지막 오류: '+lastDbError);
+  o.className='ai'; o.innerHTML=L.map(x=>esc(x)).join('<br>');
+});
 
 /* ───── 유틸 ───── */
 const pad=n=>String(n).padStart(3,'0');
@@ -838,7 +887,7 @@ async function bulkImport(files){
         if(got){rec.company=got.company||'';rec.name=got.name||'';rec.title=got.title||'';
           rec.phone=got.phone||'';rec.email=got.email||'';rec.addr=got.address||'';read++}
       }
-      rows.unshift(rec); await dbPut(rec);
+      rows.unshift(rec); await dbPut(rec); mirrorSave();
     }catch(err){ failed++ }
     done++;
     fill.style.width=Math.round(done/files.length*100)+'%';
@@ -923,7 +972,7 @@ $('saveBtn').addEventListener('click',async()=>{
       r.company=company;r.name=name;r.title=title;r.phone=phone;r.email=email;r.addr=addr;r.memo=memo;
       r.items=draft.items;r.books=draft.books||[];r.grade=draft.grade;r.spec=spec;
       r.uid=r.uid||uid(); r.updated=Date.now(); r.dirty=true;
-      await dbPut(r); pill(); if(cfg.sync)syncNow(true);
+      await dbPut(r); mirrorSave(); pill(); if(cfg.sync)syncNow(true);
     }
     draft=null;$('draft').hidden=true;$('saveBtn').textContent=t('save');
     render();toast(t('tEdited'));$('t-list').click();return;
@@ -936,7 +985,8 @@ $('saveBtn').addEventListener('click',async()=>{
     if(!draft.blob){toast('내용을 입력하거나 사진을 넣어 주세요');return;}
     if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
   }
-  rows.unshift(rec); filterStaff=''; await dbPut(rec);
+  rows.unshift(rec); filterStaff=''; const okw=await dbPut(rec); mirrorSave();
+  if(!okw)toast(t('tNoStore'));
   stamp(pad(rows.length)+' 번');
   pill(); if(cfg.sync)syncNow(true);
   draft=null;$('draft').hidden=true;render();usage();
@@ -1466,7 +1516,7 @@ $('slips').addEventListener('click',async e=>{
   if(e.target.closest('.tapzone')){ openDetail(r); return; }
   if(e.target.classList.contains('del')){
     if(!confirm(t('cDelRec')))return;
-    rows=rows.filter(x=>x.id!==r.id);sel.delete(r.id);await dbDel(r.id);render();usage();pill();return;
+    rows=rows.filter(x=>x.id!==r.id);sel.delete(r.id);await dbDel(r.id);mirrorSave();mirrorSave();render();usage();pill();return;
   }
   if(e.target.classList.contains('edit')){ startEdit(r); }
 });
@@ -1703,6 +1753,15 @@ paintBar('new');
   const ok=await openDB();
   if(!ok)$('storeWarn').hidden=false;
   rows=(await dbAll()).sort((a,b)=>b.id-a.id);
+  if(!rows.length){
+    const mir=mirrorLoad();
+    if(mir.length){                       // 저장소가 비었는데 예비본이 있으면 되살립니다
+      rows=mir.sort((a,b)=>b.id-a.id);
+      for(const r of rows){ try{ await dbPut(r) }catch(e){} }
+      setTimeout(()=>toast('예비 저장본에서 '+rows.length+'건을 복구했습니다'),900);
+    }
+  }
+  mirrorSave();
   render(); usage(); renderChips(); renderBooks(); paintScanBtn(); paintBar('new');
   $('s-sync').value=cfg.sync||''; pill();
   if(cfg.sync)syncNow(true);
