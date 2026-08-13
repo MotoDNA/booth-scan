@@ -490,7 +490,7 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  edit:'수정',del:'삭제',imported:'가져옴',noPic:'사진<br>없음',noName:'(회사명 없음)',
  aiOff:'자동 인식 꺼짐 — 설정 탭에서 API 키를 넣으면 켜집니다',aiRead:'방문증 글자를 읽는 중…',
  aiOn:'자동 인식 켜짐 — 키가 이 폰에 저장되어 있습니다',aiEdit:'기존 기록을 수정하는 중입니다',
- tSaved:'저장했습니다',tEdited:'수정했습니다',tDeleted:'사진을 지웠습니다',tReplaced:'사진을 교체했습니다',
+ tSaved:'저장했습니다',tNoStore:'저장소에 기록하지 못했습니다 — 지금 CSV로 내보내세요',tEdited:'수정했습니다',tDeleted:'사진을 지웠습니다',tReplaced:'사진을 교체했습니다',
  tCsv:'CSV를 저장했습니다',tZip:'사진을 저장했습니다',tNoRec:'내보낼 기록이 없습니다',
  tSyncOk:'동기화 완료',tCopied:'복사했습니다',tSetStaff:'먼저 담당자 이름을 설정하세요',
  cDelPhoto:'이 사진을 지웁니다. 입력한 회사명과 메모는 그대로 남습니다.',
@@ -528,7 +528,7 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  edit:'Edit',del:'Delete',imported:'Imported',noPic:'No<br>photo',noName:'(no company)',
  aiOff:'Auto-recognition off — add an API key in Settings',aiRead:'Reading the text…',
  aiOn:'Auto-recognition on — key saved on this phone',aiEdit:'Editing an existing record',
- tSaved:'Saved',tEdited:'Updated',tDeleted:'Photo deleted',tReplaced:'Photo replaced',
+ tSaved:'Saved',tNoStore:'Could not write to storage — export a CSV now',tEdited:'Updated',tDeleted:'Photo deleted',tReplaced:'Photo replaced',
  tCsv:'CSV saved',tZip:'Photos saved',tNoRec:'Nothing to export',
  tSyncOk:'Sync complete',tCopied:'Copied',tSetStaff:'Please set your staff name first',
  cDelPhoto:'Delete this photo? The company name and notes you typed will stay.',
@@ -566,7 +566,7 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  edit:'修改',del:'删除',imported:'已导入',noPic:'无<br>照片',noName:'（无公司名）',
  aiOff:'自动识别已关闭 — 在设置中填入 API 密钥即可开启',aiRead:'正在识别文字…',
  aiOn:'自动识别已开启 — 密钥已保存在本手机',aiEdit:'正在修改已有记录',
- tSaved:'已保存',tEdited:'已修改',tDeleted:'已删除照片',tReplaced:'已更换照片',
+ tSaved:'已保存',tNoStore:'无法写入存储 — 请立即导出 CSV',tEdited:'已修改',tDeleted:'已删除照片',tReplaced:'已更换照片',
  tCsv:'已保存 CSV',tZip:'已保存照片',tNoRec:'没有可导出的记录',
  tSyncOk:'同步完成',tCopied:'已复制',tSetStaff:'请先设置负责人姓名',
  cDelPhoto:'删除这张照片？已输入的公司名和备注会保留。',
@@ -616,22 +616,41 @@ function cfgLoad(){try{const v=localStorage.getItem('kp-cfg');if(v)cfg={...cfg,.
 function cfgSave(){try{localStorage.setItem('kp-cfg',JSON.stringify(cfg))}catch(e){}}
 
 /* ───── 기록 저장 (IndexedDB · 사진 포함) ───── */
-let db=null, memOnly=false;
+let db=null, memOnly=false, dbReady=null;
 function openDB(){
-  return new Promise(res=>{
+  if(dbReady)return dbReady;
+  dbReady = new Promise(res=>{
     try{
       const r=indexedDB.open('kprint2026',1);
       r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('recs'))d.createObjectStore('recs',{keyPath:'id'})};
       r.onsuccess=e=>{db=e.target.result;res(true)};
       r.onerror=()=>{memOnly=true;res(false)};
+      r.onblocked=()=>{memOnly=true;res(false)};
     }catch(e){memOnly=true;res(false)}
   });
+  return dbReady;
 }
 function tx(mode){return db.transaction('recs',mode).objectStore('recs')}
-function dbAll(){return new Promise(res=>{if(!db)return res([]);const q=tx('readonly').getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])})}
-function dbPut(r){return new Promise(res=>{if(!db)return res();const q=tx('readwrite').put(r);q.onsuccess=()=>res();q.onerror=()=>res()})}
-function dbDel(id){return new Promise(res=>{if(!db)return res();const q=tx('readwrite').delete(id);q.onsuccess=()=>res();q.onerror=()=>res()})}
-function dbClear(){return new Promise(res=>{if(!db)return res();const q=tx('readwrite').clear();q.onsuccess=()=>res();q.onerror=()=>res()})}
+async function dbAll(){
+  await openDB();
+  return new Promise(res=>{if(!db)return res([]);const q=tx('readonly').getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])});
+}
+async function dbPut(r){
+  await openDB();
+  return new Promise(res=>{
+    if(!db){toast(t('tNoStore'));return res(false)}
+    try{const q=tx('readwrite').put(r);q.onsuccess=()=>res(true);q.onerror=()=>{toast(t('tNoStore'));res(false)}}
+    catch(e){toast(t('tNoStore'));res(false)}
+  });
+}
+async function dbDel(id){
+  await openDB();
+  return new Promise(res=>{if(!db)return res();const q=tx('readwrite').delete(id);q.onsuccess=()=>res();q.onerror=()=>res()});
+}
+async function dbClear(){
+  await openDB();
+  return new Promise(res=>{if(!db)return res();const q=tx('readwrite').clear();q.onsuccess=()=>res();q.onerror=()=>res()});
+}
 
 /* ───── 유틸 ───── */
 const pad=n=>String(n).padStart(3,'0');
@@ -917,7 +936,7 @@ $('saveBtn').addEventListener('click',async()=>{
     if(!draft.blob){toast('내용을 입력하거나 사진을 넣어 주세요');return;}
     if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
   }
-  rows.unshift(rec); await dbPut(rec);
+  rows.unshift(rec); filterStaff=''; await dbPut(rec);
   stamp(pad(rows.length)+' 번');
   pill(); if(cfg.sync)syncNow(true);
   draft=null;$('draft').hidden=true;render();usage();
@@ -1681,7 +1700,7 @@ paintBar('new');
   applyLang();
   $('s-staff').value=cfg.staff; $('s-key').value=cfg.key; $('s-model').value=cfg.model||'';
   if(linked)setTimeout(()=>toast('설정을 받았습니다 — 자동 인식이 켜졌습니다'),800);
-  const ok=await Promise.race([openDB(),new Promise(r=>setTimeout(()=>r(false),4000))]);
+  const ok=await openDB();
   if(!ok)$('storeWarn').hidden=false;
   rows=(await dbAll()).sort((a,b)=>b.id-a.id);
   render(); usage(); renderChips(); renderBooks(); paintScanBtn(); paintBar('new');
