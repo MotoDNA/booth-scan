@@ -152,6 +152,7 @@ section[hidden]{display:none}
 .selbar .chk{display:flex;align-items:center;gap:9px;font-size:.75rem;font-weight:700}
 .selbar input{width:19px;height:19px;accent-color:#F26A21}
 .selcnt{flex:1;font-size:.7rem;color:var(--brand);font-weight:700}
+.selbar #selDel{font-size:.7rem;font-weight:800;color:#C8342A;margin-right:10px}
 .selbar #selClear{font-size:.7rem;font-weight:700;color:var(--mut)}
 
 .slip{display:flex;gap:14px;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:12px;position:relative}
@@ -346,6 +347,7 @@ section[hidden]{display:none}
   <div class="selbar" id="selBar" hidden>
     <label class="chk"><input type="checkbox" id="selAll"><span data-i18n="selAll">전체 선택</span></label>
     <span class="selcnt" id="selCnt"></span>
+    <button id="selDel" data-i18n="selDel">선택 삭제</button>
     <button id="selClear" data-i18n="selNone">선택 해제</button>
   </div>
   <div id="slips"></div>
@@ -471,7 +473,7 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  scanOrig:'원본 보기',scanFix:'스캔 보정',delPhoto:'사진 삭제',noPhoto:'사진 없음 — 메모만 저장됩니다',
  lCompany:'회사명',lName:'성함',lTitle:'직함',lPhone:'전화번호',lEmail:'이메일',lAddr:'회사 주소',
  lItems:'관심 품목',lBooks:'샘플북 요청',lMemo:'상담 메모',lGrade:'등급',
- selAll:'전체 선택',selNone:'선택 해제',selCnt:'개 선택됨',
+ selAll:'전체 선택',selNone:'선택 해제',selDel:'선택 삭제',cDelSel:'선택한 %n건을 삭제합니다. 사진도 함께 지워지며 되돌릴 수 없습니다.',tDelSel:'%n건을 삭제했습니다',selCnt:'개 선택됨',
  bExport:'내보내기',exCsv:'CSV 내보내기',exCard:'정보카드 내보내기',exVcf:'연락처로 저장',dVcf:'연락처 저장',vcfDone:'연락처 파일을 만들었습니다',vcfHint:'파일을 열면 연락처에 추가할 수 있습니다',
  cardMaking:'정보카드를 만드는 중…',cardDone:'정보카드를 저장했습니다',
  dTitle:'접수 상세',dClose:'닫기',dCard:'정보카드 저장',dEdit:'수정',dDel:'삭제',
@@ -509,7 +511,7 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  scanOrig:'View original',scanFix:'Scan cleanup',delPhoto:'Delete photo',noPhoto:'No photo — notes only',
  lCompany:'Company',lName:'Name',lTitle:'Job title',lPhone:'Phone',lEmail:'Email',lAddr:'Company address',
  lItems:'Products of interest',lBooks:'Sample book request',lMemo:'Notes',lGrade:'Priority',
- selAll:'Select all',selNone:'Clear',selCnt:' selected',
+ selAll:'Select all',selNone:'Clear',selDel:'Delete selected',cDelSel:'Delete %n selected records? Photos will be removed too and this cannot be undone.',tDelSel:'%n records deleted',selCnt:' selected',
  bExport:'Export',exCsv:'Export CSV',exCard:'Export info cards',exVcf:'Save as contacts',dVcf:'Save contact',vcfDone:'Contact file created',vcfHint:'Open the file to add it to your contacts',
  cardMaking:'Creating info cards…',cardDone:'Info cards saved',
  dTitle:'Record',dClose:'Close',dCard:'Save info card',dEdit:'Edit',dDel:'Delete',
@@ -547,7 +549,7 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  scanOrig:'查看原图',scanFix:'扫描优化',delPhoto:'删除照片',noPhoto:'无照片 — 仅保存备注',
  lCompany:'公司名称',lName:'姓名',lTitle:'职务',lPhone:'电话',lEmail:'邮箱',lAddr:'公司地址',
  lItems:'感兴趣产品',lBooks:'索取样本册',lMemo:'洽谈备注',lGrade:'等级',
- selAll:'全选',selNone:'取消选择',selCnt:' 项已选',
+ selAll:'全选',selNone:'取消选择',selDel:'删除所选',cDelSel:'将删除所选 %n 条记录，照片也会一并删除且无法恢复。',tDelSel:'已删除 %n 条记录',selCnt:' 项已选',
  bExport:'导出',exCsv:'导出 CSV',exCard:'导出信息卡',exVcf:'保存为联系人',dVcf:'保存联系人',vcfDone:'已生成联系人文件',vcfHint:'打开文件即可添加到通讯录',
  cardMaking:'正在生成信息卡…',cardDone:'已保存信息卡',
  dTitle:'登记详情',dClose:'关闭',dCard:'保存信息卡',dEdit:'修改',dDel:'删除',
@@ -1160,6 +1162,15 @@ $('selAll').addEventListener('change',e=>{
   render();
 });
 $('selClear').addEventListener('click',()=>{ sel.clear(); render(); });
+$('selDel').addEventListener('click',async()=>{
+  const targets=rows.filter(r=>sel.has(r.id));
+  if(!targets.length){ toast(t('tNoRec')); return; }
+  if(!confirm(t('cDelSel').replace('%n',targets.length)))return;
+  for(const r of targets){ await dbDel(r.id); sel.delete(r.id); }
+  rows=rows.filter(r=>!targets.some(x=>x.id===r.id));
+  mirrorSave(); render(); usage(); pill();
+  toast(t('tDelSel').replace('%n',targets.length));
+});
 
 /* ── 상세 보기 ── */
 let detailId=null;
@@ -1505,6 +1516,7 @@ function render(){
         <div class="acts"><button class="edit">${t('edit')}</button><button class="del">${t('del')}</button></div>
       </div></article>`;
   }).join('');
+  paintSel();
 }
 $('slips').addEventListener('click',async e=>{
   const s=e.target.closest('.slip');if(!s)return;
