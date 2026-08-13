@@ -186,6 +186,7 @@ section[hidden]{display:none}
     <div class="photoacts" id="photoActs">
       <button id="rePhoto">사진 다시 찍기</button>
       <button id="rePick">사진첩에서 고르기</button>
+      <button id="toggleScan">원본 보기</button>
       <button id="delPhoto" class="danger">사진 삭제</button>
     </div>
     <div class="nophoto" id="noPhoto" hidden>사진 없음 — 메모만 저장됩니다</div>
@@ -247,6 +248,11 @@ section[hidden]{display:none}
     <div class="ai" id="linkStatus"></div>
   </div>
   <div class="setrow">
+    <h4>스캔 보정</h4>
+    <p>사진을 찍거나 불러오면 그림자와 조명 얼룩을 걷어내고 배경을 하얗게 펴서 스캔한 문서처럼 만듭니다. 글자가 또렷해지고 용량도 줄어듭니다. 촬영 화면에서 언제든 원본과 번갈아 볼 수 있습니다.</p>
+    <button id="s-scan">불러오는 중</button>
+  </div>
+  <div class="setrow">
     <h4>저장 상태</h4>
     <p id="usage">계산 중…</p>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
@@ -297,6 +303,65 @@ function nowStr(){const d=new Date(),p=n=>String(n).padStart(2,'0');
 function stamp(txt){const d=document.createElement('div');d.className='flash';
   d.innerHTML='<div>접수<small>'+txt+'</small></div>';document.body.appendChild(d);
   setTimeout(()=>d.remove(),950); if(navigator.vibrate)navigator.vibrate(55)}
+
+
+/* ───── 스캔 보정 ─────
+   조명 얼룩과 그림자를 걷어내고 배경을 하얗게 펴서
+   스캐너로 뜬 것처럼 만듭니다. */
+function scanify(blob){
+  return new Promise((res)=>{
+    const im=new Image();
+    im.onload=()=>{
+      try{
+        const w=im.width,h=im.height;
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        const ctx=c.getContext('2d',{willReadFrequently:true});
+        ctx.drawImage(im,0,0);
+        const d=ctx.getImageData(0,0,w,h), px=d.data;
+
+        // 1) 흑백으로
+        const g=new Float32Array(w*h);
+        for(let i=0,j=0;i<px.length;i+=4,j++)
+          g[j]=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+
+        // 2) 적분영상으로 넓은 범위 평균(= 조명 상태) 계산
+        const ii=new Float64Array((w+1)*(h+1));
+        for(let y=0;y<h;y++){
+          let row=0;
+          for(let x=0;x<w;x++){
+            row+=g[y*w+x];
+            ii[(y+1)*(w+1)+(x+1)]=ii[y*(w+1)+(x+1)]+row;
+          }
+        }
+        const r=Math.max(8,Math.floor(Math.min(w,h)/12));
+        const mean=(x,y)=>{
+          const x0=Math.max(0,x-r),y0=Math.max(0,y-r),
+                x1=Math.min(w-1,x+r),y1=Math.min(h-1,y+r);
+          const a=ii[y0*(w+1)+x0],b=ii[y0*(w+1)+(x1+1)],
+                cc=ii[(y1+1)*(w+1)+x0],dd=ii[(y1+1)*(w+1)+(x1+1)];
+          return (dd-b-cc+a)/((x1-x0+1)*(y1-y0+1));
+        };
+
+        // 3) 조명으로 나눠 평탄화한 뒤 대비를 세웁니다
+        const LO=0.80, HI=1.02;
+        for(let y=0;y<h;y++){
+          for(let x=0;x<w;x++){
+            const j=y*w+x, bg=mean(x,y)+1;
+            let v=(g[j]/bg - LO)/(HI-LO);
+            v=v<0?0:v>1?1:v;
+            v=v*v*(3-2*v);              // 중간톤 정리
+            const o=Math.round(v*255), i4=j*4;
+            px[i4]=px[i4+1]=px[i4+2]=o; px[i4+3]=255;
+          }
+        }
+        ctx.putImageData(d,0,0);
+        c.toBlob(b=>res(b||blob),'image/jpeg',0.72);
+      }catch(e){ res(blob) }
+    };
+    im.onerror=()=>res(blob);
+    im.src=URL.createObjectURL(blob);
+  });
+}
 
 /* 사진 압축 */
 function shrink(file){
@@ -355,19 +420,20 @@ $('shootBtn').addEventListener('click',()=>$('cam').click());
 $('pickBtn').addEventListener('click',()=>$('gal').click());
 
 async function startDraft(file){
-  const blob=await shrink(file);
-  draft={blob,grade:'',items:[],books:[],editId:null};
+  const orig=await shrink(file);
+  const scanned=cfg.scan?await scanify(orig):null;
+  draft={orig,scanned,blob:(scanned||orig),scanOn:!!scanned,grade:'',items:[],books:[],editId:null};
   $('draft').hidden=false; showPhoto();
   ['f-company','f-name','f-title','f-phone','f-email','f-addr','f-memo'].forEach(i=>$(i).value='');
   $('saveBtn').textContent='명부에 접수';
   renderChips();renderBooks();renderGrade();
   $('draft').scrollIntoView({behavior:'smooth',block:'start'});
-  readBadge(blob);
+  readBadge(orig);
 }
 
 /* 명부에서 불러와 수정 */
 function startEdit(r){
-  draft={blob:r.photo,grade:r.grade||'',items:[...(r.items||[])],books:[...(r.books||[])],editId:r.id};
+  draft={blob:r.photo,orig:r.photo,scanned:null,scanOn:false,grade:r.grade||'',items:[...(r.items||[])],books:[...(r.books||[])],editId:r.id};
   $('draft').hidden=false; showPhoto();
   $('f-company').value=r.company||'';$('f-name').value=r.name||'';$('f-title').value=r.title||'';
   $('f-phone').value=r.phone||'';$('f-email').value=r.email||'';$('f-addr').value=r.addr||'';
@@ -402,12 +468,13 @@ async function bulkImport(files){
   for(const f of files){
     ttl.textContent='불러오는 중 '+(done+1)+' / '+files.length;
     try{
-      const blob=await shrink(f);
+      const raw=await shrink(f);
+      const blob=cfg.scan?await scanify(raw):raw;
       const rec={id:Date.now()+done,at:nowStr(),staff:cfg.staff||'',
         company:'',name:'',title:'',phone:'',email:'',addr:'',items:[],books:[],grade:'',memo:'',photo:blob};
       if(cfg.key){
         msg.textContent='방문증 글자를 읽는 중…';
-        const got=await readBadgeQuiet(blob);
+        const got=await readBadgeQuiet(raw);
         if(got){rec.company=got.company||'';rec.name=got.name||'';rec.title=got.title||'';
           rec.phone=got.phone||'';rec.email=got.email||'';rec.addr=got.address||'';read++}
       }
@@ -510,20 +577,36 @@ function showPhoto(){
   $('photoActs').hidden=!has;
   $('noPhoto').hidden=has;
   if(has)$('preview').src=URL.createObjectURL(draft.blob);
+  const tb=$('toggleScan');
+  if(tb){ tb.hidden=!(draft&&draft.orig); tb.textContent=(draft&&draft.scanOn)?'원본 보기':'스캔 보정'; }
 }
 $('delPhoto').addEventListener('click',()=>{
   if(!draft)return;
   if(!confirm('이 사진을 지웁니다. 입력한 회사명과 메모는 그대로 남습니다.'))return;
   draft.blob=null; showPhoto(); toast('사진을 지웠습니다');
 });
+$('toggleScan').addEventListener('click',async()=>{
+  if(!draft||!draft.orig)return;
+  const btn=$('toggleScan');
+  if(draft.scanOn){ draft.blob=draft.orig; draft.scanOn=false; }
+  else{
+    if(!draft.scanned){ btn.textContent='보정 중…'; draft.scanned=await scanify(draft.orig); }
+    draft.blob=draft.scanned; draft.scanOn=true;
+  }
+  showPhoto();
+});
 $('rePhoto').addEventListener('click',()=>{$('recam').click()});
 $('rePick').addEventListener('click',()=>{$('regal').click()});
 async function replacePhoto(f){
   if(!f||!draft)return;
   try{
-    draft.blob=await shrink(f); showPhoto();
+    draft.orig=await shrink(f);
+    draft.scanned=cfg.scan?await scanify(draft.orig):null;
+    draft.scanOn=!!draft.scanned;
+    draft.blob=draft.scanned||draft.orig;
+    showPhoto();
     toast('사진을 교체했습니다');
-    if(cfg.key&&!draft.editId)readBadge(draft.blob);
+    if(cfg.key&&!draft.editId)readBadge(draft.orig);
   }catch(err){toast(String(err))}
 }
 $('recam').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];e.target.value='';replacePhoto(f)});
@@ -634,6 +717,8 @@ async function usage(){
   try{const est=await navigator.storage.estimate();if(est&&est.quota)q=' · 사용 가능 약 '+Math.round(est.quota/1048576)+'MB'}catch(e){}
   $('usage').textContent='기록 '+rows.length+'건 · 사진 '+(b/1048576).toFixed(1)+'MB'+q;
 }
+function paintScanBtn(){ $('s-scan').textContent = cfg.scan ? '자동 보정 켜짐 — 누르면 끕니다' : '자동 보정 꺼짐 — 누르면 켭니다'; }
+$('s-scan').addEventListener('click',()=>{ cfg.scan=!cfg.scan; cfgSave(); paintScanBtn(); toast(cfg.scan?'자동 보정을 켰습니다':'자동 보정을 껐습니다'); });
 $('s-wipe').addEventListener('click',async()=>{
   if(!rows.length)return;
   if(!confirm('기록 '+rows.length+'건과 사진을 모두 삭제합니다. 되돌릴 수 없습니다.\n\nCSV와 사진을 먼저 내보냈는지 확인하세요.'))return;
@@ -762,7 +847,7 @@ $('s-link').addEventListener('click',async()=>{
   const ok=await openDB();
   if(!ok)$('storeWarn').hidden=false;
   rows=(await dbAll()).sort((a,b)=>b.id-a.id);
-  render(); usage(); renderChips(); renderBooks();
+  render(); usage(); renderChips(); renderBooks(); paintScanBtn();
   if(!cfg.staff){$('t-set').click();toast('먼저 담당자 이름을 설정하세요')}
 })();
 </script>
