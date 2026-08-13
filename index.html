@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#EFEAE0">
-<title>부스 접수대 · K-print 2026</title>
+<meta http-equiv="Cache-Control" content="no-store">
+<title>ACTIVA KOREA · 부스 접수대</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
@@ -14,6 +15,7 @@
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{
   background:var(--paper);
@@ -25,9 +27,15 @@ body{
 button,input,textarea,select{font-family:inherit;font-size:16px}
 button{cursor:pointer}
 
-header{padding:14px 18px 11px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
-.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted)}
-h1{margin:1px 0 0;font-size:21px;font-weight:800;letter-spacing:-.02em}
+header{padding:15px 18px 12px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.brandwrap{min-width:0}
+.logo{max-height:30px;max-width:190px;width:auto;display:block;object-fit:contain}
+.wordmark{
+  font-size:20px;font-weight:800;letter-spacing:.02em;line-height:1;
+  display:flex;align-items:baseline;gap:6px;
+}
+.wordmark em{font-style:normal;font-weight:500;color:var(--stamp);letter-spacing:.14em;font-size:17px}
+.sub{font-family:var(--mono);font-size:10px;letter-spacing:.11em;color:var(--muted);margin-top:6px}
 .who{font-size:11px;color:var(--muted);margin-top:3px}
 .who b{color:var(--stamp)}
 .cnt{text-align:right;line-height:1}
@@ -48,6 +56,14 @@ section[hidden]{display:none}
 .shoot b{display:block;font-size:19px;font-weight:800;letter-spacing:-.01em}
 .shoot span{display:block;font-size:12px;opacity:.7;margin-top:5px}
 .shoot:disabled{opacity:.5}
+.shoot.alt{background:transparent;color:var(--ink);margin-top:10px;padding:17px 16px}
+.shoot.alt b{font-size:16px}
+.shoot.alt span{opacity:.6;margin-top:3px}
+.bulk{margin-top:12px;background:var(--slip);border:1px solid var(--rule);border-radius:2px;padding:12px}
+.bulk h4{margin:0 0 7px;font-size:13.5px;font-weight:800}
+.bulkbar{height:7px;background:var(--paper2);border-radius:99px;overflow:hidden}
+.bulkbar i{display:block;height:100%;background:var(--ok);width:0;transition:width .25s}
+.bulk p{margin:7px 0 0;font-size:12px;color:var(--muted)}
 
 .card{background:var(--slip);border:1px solid var(--rule);border-radius:2px;padding:14px;margin-top:14px;position:relative}
 .card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:4px;background:repeating-linear-gradient(90deg,var(--rule) 0 5px,transparent 5px 10px)}
@@ -112,9 +128,10 @@ section[hidden]{display:none}
 <body>
 
 <header>
-  <div>
-    <div class="eyebrow">K-PRINT 2026 · KINTEX</div>
-    <h1>부스 접수대</h1>
+  <div class="brandwrap">
+    <img id="logo" class="logo" src="logo.png" alt="ACTIVA KOREA" hidden>
+    <div id="wordmark" class="wordmark">ACTIVA<em>KOREA</em></div>
+    <div class="sub">ACTIVA KOREA · 부스 접수대</div>
     <div class="who">담당자 <b id="staffName">미설정</b></div>
   </div>
   <div class="cnt"><b id="count">0</b><span>접수</span></div>
@@ -130,7 +147,15 @@ section[hidden]{display:none}
 <section id="p-new">
   <div class="warn" id="storeWarn" hidden>저장 기능이 작동하지 않는 환경입니다. 지금 기록하면 화면을 닫는 순간 사라집니다. 반드시 배포한 주소(https://)에서 사용하세요.</div>
   <input type="file" id="cam" accept="image/*" capture="environment" hidden>
+  <input type="file" id="gal" accept="image/*" multiple hidden>
   <button class="shoot" id="shootBtn"><b>방문증 촬영</b><span>휴대폰 카메라가 열립니다</span></button>
+  <button class="shoot alt" id="pickBtn"><b>사진첩에서 선택</b><span>여러 장을 한 번에 불러올 수 있습니다</span></button>
+
+  <div class="bulk" id="bulk" hidden>
+    <h4 id="bulkTitle">사진을 불러오는 중…</h4>
+    <div class="bulkbar"><i id="bulkFill"></i></div>
+    <p id="bulkMsg"></p>
+  </div>
 
   <div class="card" id="draft" hidden>
     <img class="shot" id="preview" alt="촬영한 방문증">
@@ -275,22 +300,85 @@ async function readBadge(blob){
   }
 }
 
-/* ───── 촬영 ───── */
+/* ───── 촬영 / 사진첩 ───── */
 $('shootBtn').addEventListener('click',()=>$('cam').click());
+$('pickBtn').addEventListener('click',()=>$('gal').click());
+
+async function startDraft(file){
+  const blob=await shrink(file);
+  draft={blob,grade:'',items:[]};
+  $('preview').src=URL.createObjectURL(blob);
+  $('draft').hidden=false;
+  $('f-company').value='';$('f-name').value='';$('f-memo').value='';
+  renderChips();renderGrade();
+  $('draft').scrollIntoView({behavior:'smooth',block:'start'});
+  readBadge(blob);
+}
+
 $('cam').addEventListener('change',async e=>{
   const f=e.target.files&&e.target.files[0]; e.target.value='';
   if(!f)return;
-  try{
-    const blob=await shrink(f);
-    draft={blob,grade:'',items:[]};
-    $('preview').src=URL.createObjectURL(blob);
-    $('draft').hidden=false;
-    $('f-company').value='';$('f-name').value='';$('f-memo').value='';
-    renderChips();renderGrade();
-    $('draft').scrollIntoView({behavior:'smooth',block:'start'});
-    readBadge(blob);
-  }catch(err){toast(String(err))}
+  try{ await startDraft(f) }catch(err){toast(String(err))}
 });
+
+$('gal').addEventListener('change',async e=>{
+  const files=[...(e.target.files||[])]; e.target.value='';
+  if(!files.length)return;
+  if(files.length===1){ try{ await startDraft(files[0]) }catch(err){toast(String(err))} return; }
+  if(!confirm('사진 '+files.length+'장을 한 번에 명부에 넣습니다.\n회사명과 이름은 나중에 명부에서 수정할 수 있습니다.\n\n계속할까요?'))return;
+  await bulkImport(files);
+});
+
+/* 여러 장 일괄 저장 */
+async function bulkImport(files){
+  const box=$('bulk'), fill=$('bulkFill'), msg=$('bulkMsg'), ttl=$('bulkTitle');
+  box.hidden=false; $('draft').hidden=true; draft=null;
+  $('shootBtn').disabled=true; $('pickBtn').disabled=true;
+  let done=0, failed=0, read=0;
+  for(const f of files){
+    ttl.textContent='불러오는 중 '+(done+1)+' / '+files.length;
+    try{
+      const blob=await shrink(f);
+      const rec={id:Date.now()+done,at:nowStr(),staff:cfg.staff||'',
+        company:'',name:'',items:[],grade:'',memo:'',photo:blob};
+      if(cfg.key){
+        msg.textContent='방문증 글자를 읽는 중…';
+        const got=await readBadgeQuiet(blob);
+        if(got){rec.company=got.company||'';rec.name=got.name||'';read++}
+      }
+      rows.unshift(rec); await dbPut(rec);
+    }catch(err){ failed++ }
+    done++;
+    fill.style.width=Math.round(done/files.length*100)+'%';
+    msg.textContent='저장 '+(done-failed)+'건'+(failed?' · 실패 '+failed+'건':'');
+    render();
+  }
+  ttl.textContent='완료';
+  msg.textContent=(done-failed)+'건을 명부에 넣었습니다.'+(cfg.key?' 자동 인식 '+read+'건.':' 명부에서 회사명과 이름을 입력하세요.');
+  $('shootBtn').disabled=false; $('pickBtn').disabled=false;
+  usage(); if(navigator.vibrate)navigator.vibrate([50,80,50]);
+  setTimeout(()=>{box.hidden=true;fill.style.width='0'},6000);
+}
+
+async function readBadgeQuiet(blob){
+  try{
+    const b64=await blobToB64(blob);
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'content-type':'application/json','x-api-key':cfg.key,
+        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:cfg.model||'claude-sonnet-5',max_tokens:300,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
+          {type:'text',text:'전시회 방문증 사진입니다. 인쇄된 글자에서 회사명과 사람 이름·직함을 읽어 주세요. 오직 JSON만 출력하고 다른 말은 쓰지 마세요. 형식: {"company":"회사명","name":"이름 직함"} 읽을 수 없으면 빈 문자열로 두세요.'}
+        ]}]})
+    });
+    if(!r.ok)return null;
+    const d=await r.json();
+    const t=(d.content||[]).map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
+    return JSON.parse(t.slice(t.indexOf('{'),t.lastIndexOf('}')+1));
+  }catch(e){return null}
+}
 
 function renderChips(){
   $('chips').innerHTML=ITEMS.map(i=>
@@ -409,7 +497,7 @@ $('exCsv').addEventListener('click',()=>{
     .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.grade,(r.items||[]).join(' / '),r.memo,
       pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
     .join('\r\n');
-  dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'kprint2026_명부_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
+  dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'ACTIVAKOREA_명부_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
   toast('CSV를 저장했습니다');
 });
 $('exZip').addEventListener('click',async()=>{
@@ -419,9 +507,20 @@ $('exZip').addEventListener('click',async()=>{
   const zip=new JSZip(), list=[...rows].reverse();
   list.forEach((r,i)=>{if(r.photo)zip.file(pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg',r.photo)});
   const b=await zip.generateAsync({type:'blob'});
-  dl(b,'kprint2026_사진_'+(cfg.staff||'담당자')+'_'+today()+'.zip');
+  dl(b,'ACTIVAKOREA_사진_'+(cfg.staff||'담당자')+'_'+today()+'.zip');
   toast('사진을 저장했습니다');
 });
+
+/* ───── 로고 자동 전환 ───── */
+(function(){
+  const img=$('logo'), wm=$('wordmark');
+  const show=()=>{img.hidden=false;wm.hidden=true};
+  const fall=()=>{img.hidden=true;wm.hidden=false};
+  img.addEventListener('load',show);
+  img.addEventListener('error',fall);
+  // 스크립트가 늦게 실행돼 load/error 를 놓친 경우까지 처리
+  if(img.complete) (img.naturalWidth>0 ? show() : fall());
+})();
 
 /* ───── 시작 ───── */
 (async()=>{
