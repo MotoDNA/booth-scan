@@ -68,6 +68,10 @@ section[hidden]{display:none}
 .card{background:var(--slip);border:1px solid var(--rule);border-radius:2px;padding:14px;margin-top:14px;position:relative}
 .card::before{content:"";position:absolute;left:0;right:0;top:-1px;height:4px;background:repeating-linear-gradient(90deg,var(--rule) 0 5px,transparent 5px 10px)}
 .shot{width:100%;border:1px solid var(--rule);border-radius:2px;display:block;background:#ddd}
+.photoacts{display:flex;gap:6px;margin-top:8px}
+.photoacts button{flex:1;padding:9px 0;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:11.5px;font-weight:700;color:var(--muted)}
+.photoacts button.danger{color:var(--stamp);border-color:#E7C6C2}
+.nophoto{border:1px dashed var(--rule);border-radius:2px;padding:26px 12px;text-align:center;font-size:13px;color:var(--muted);background:#F5F1E7}
 .fld{margin-top:11px}
 .fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:4px}
 .fld input,.fld textarea{width:100%;border:0;border-bottom:1px solid var(--rule);background:transparent;padding:7px 2px;color:var(--ink)}
@@ -76,6 +80,8 @@ section[hidden]{display:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .chips button{padding:8px 11px;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:12.5px;font-weight:600;color:var(--muted)}
 .chips button[aria-pressed=true]{background:var(--ink);color:var(--slip);border-color:var(--ink)}
+.chips.books button[aria-pressed=true]{background:#1F4E6B;color:#fff;border-color:#1F4E6B}
+.slip .tags i.b{background:#1F4E6B;color:#fff;border-color:#1F4E6B}
 .grade{display:flex;gap:6px;margin-top:6px}
 .grade button{flex:1;padding:11px 0;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .grade button[aria-pressed=true]{background:var(--stamp);color:#fff;border-color:var(--stamp)}
@@ -122,7 +128,19 @@ section[hidden]{display:none}
 .setrow input{width:100%;border:1px solid var(--rule);border-radius:2px;padding:10px;background:var(--paper)}
 .setrow button{margin-top:9px;padding:11px 16px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:2px;font-size:13px;font-weight:700}
 .setrow button.sec{background:transparent;color:var(--ink)}
+.keyrow{display:flex;gap:7px;margin-top:8px}
+.keyrow button{flex:1;margin-top:0!important;padding:11px 0}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
+/* 인앱 브라우저 차단 화면 */
+#inapp{position:fixed;inset:0;z-index:200;background:var(--paper);padding:30px 24px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+#inapp h2{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.35}
+#inapp p{margin:0;font-size:14px;color:var(--muted);line-height:1.75}
+#inapp p b{color:var(--stamp)}
+#inapp .url{font-family:var(--mono);font-size:12.5px;background:var(--slip);border:1px dashed var(--rule);padding:11px;border-radius:2px;word-break:break-all}
+#inapp button{width:100%;padding:16px;border-radius:2px;font-size:15.5px;font-weight:800;border:1px solid var(--ink)}
+#inapp .go{background:var(--ink);color:var(--paper)}
+#inapp .cp{background:transparent;color:var(--ink)}
+#inapp .skip{background:none;border:0;color:var(--muted);font-size:12.5px;font-weight:600;text-decoration:underline;padding:6px}
 </style>
 </head>
 <body>
@@ -148,6 +166,8 @@ section[hidden]{display:none}
   <div class="warn" id="storeWarn" hidden>저장 기능이 작동하지 않는 환경입니다. 지금 기록하면 화면을 닫는 순간 사라집니다. 반드시 배포한 주소(https://)에서 사용하세요.</div>
   <input type="file" id="cam" accept="image/*" capture="environment" hidden>
   <input type="file" id="gal" accept="image/*" multiple hidden>
+  <input type="file" id="recam" accept="image/*" capture="environment" hidden>
+  <input type="file" id="regal" accept="image/*" hidden>
   <button class="shoot" id="shootBtn"><b>방문증 촬영</b><span>휴대폰 카메라가 열립니다</span></button>
   <button class="shoot alt" id="pickBtn"><b>사진첩에서 선택</b><span>여러 장을 한 번에 불러올 수 있습니다</span></button>
 
@@ -159,13 +179,22 @@ section[hidden]{display:none}
 
   <div class="card" id="draft" hidden>
     <img class="shot" id="preview" alt="촬영한 방문증">
+    <div class="photoacts" id="photoActs">
+      <button id="rePhoto">사진 다시 찍기</button>
+      <button id="rePick">사진첩에서 고르기</button>
+      <button id="delPhoto" class="danger">사진 삭제</button>
+    </div>
+    <div class="nophoto" id="noPhoto" hidden>사진 없음 — 메모만 저장됩니다</div>
     <div class="ai" id="aiStatus"></div>
-    <div class="fld"><label>회사명</label><input id="f-company" placeholder="예: 액티바코리아"></div>
-    <div class="fld"><label>이름 / 직함</label><input id="f-name" placeholder="예: 최환준 부장"></div>
+    <div class="fld"><label>회사명</label><input id="f-company" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 액티바코리아"></div>
+    <div class="fld"><label>이름 / 직함</label><input id="f-name" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 최환준 부장"></div>
     <div class="fld"><label>관심 품목</label>
       <div class="chips" id="chips"></div>
     </div>
-    <div class="fld"><label>상담 메모</label><textarea id="f-memo" placeholder="샘플 요청, 단가 문의, 재방문 약속 등"></textarea></div>
+    <div class="fld"><label>샘플북 요청</label>
+      <div class="chips books" id="books"></div>
+    </div>
+    <div class="fld"><label>상담 메모</label><textarea id="f-memo" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="샘플 요청, 단가 문의, 재방문 약속 등"></textarea></div>
     <div class="fld"><label>등급</label>
       <div class="grade" id="grade">
         <button data-g="A" aria-pressed="false">A 즉시상담</button>
@@ -186,17 +215,29 @@ section[hidden]{display:none}
   <div class="setrow">
     <h4>담당자 이름</h4>
     <p>여러 명이 나눠 쓸 때 누가 받은 리드인지 구분합니다. CSV에 함께 기록됩니다.</p>
-    <input id="s-staff" placeholder="예: 최환준">
+    <input id="s-staff" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="예: 최환준">
     <button id="s-staffSave">저장</button>
   </div>
   <div class="setrow">
     <h4>자동 인식 (선택)</h4>
-    <p>Claude API 키를 넣으면 촬영 즉시 회사명과 이름을 자동으로 채웁니다. 키는 이 휴대폰에만 저장되고 어디로도 전송되지 않습니다. 비워 두면 손으로 입력하는 방식으로 동작합니다.</p>
+    <p>켜면 촬영 즉시 회사명과 이름이 자동으로 채워집니다. 키는 이 휴대폰에만 저장되며 어디로도 전송되지 않습니다.<br><br>
+    <b>켜는 방법</b> — 컴퓨터에서 console.anthropic.com 접속 → 왼쪽 API keys → Create Key → 생성된 sk-ant- 로 시작하는 문자열을 복사해 아래에 붙여넣고 <b>키 연결 확인</b>을 누르세요. 모델명은 비워 두면 알아서 맞는 것을 찾습니다.</p>
     <input id="s-key" type="password" placeholder="sk-ant-... (선택 사항)" autocomplete="off">
-    <input id="s-model" placeholder="claude-sonnet-5" style="margin-top:8px">
+    <div class="keyrow">
+      <button class="sec" id="s-paste">붙여넣기</button>
+      <button class="sec" id="s-eye">보기</button>
+    </div>
+    <input id="s-model" placeholder="비워 두면 자동으로 찾습니다" style="margin-top:8px">
     <button id="s-test">키 연결 확인</button>
     <button class="sec" id="s-keySave">저장</button>
     <div class="ai" id="testStatus"></div>
+  </div>
+  <div class="setrow">
+    <h4>직원용 설치 링크</h4>
+    <p>키 연결이 끝난 뒤 이 버튼을 누르면 키가 담긴 링크가 만들어집니다. 직원이 그 링크를 한 번만 열면 자동 인식이 켜진 상태로 바로 사용할 수 있습니다.<br><br>
+    <b>이 링크를 아는 사람은 누구나 키를 쓸 수 있습니다.</b> 함께 일하는 사람에게만 보내고, 전시가 끝나면 키를 삭제하세요.</p>
+    <button id="s-link">설치 링크 만들어 복사</button>
+    <div class="ai" id="linkStatus"></div>
   </div>
   <div class="setrow">
     <h4>저장 상태</h4>
@@ -213,7 +254,8 @@ section[hidden]{display:none}
 <div class="toast" id="toast"></div>
 
 <script>
-const ITEMS=['친환경 특수지','습식 PU 커버','샘플 요청','견적 요청','해외 바이어','동종업계'];
+const ITEMS=['친환경 특수지','습식 PU 커버','VIVI (PVC) 지레자','샘플 요청','견적 요청','해외 바이어','동종업계'];
+const BOOKS=['MUSE 1','MUSE 2','MUSE 3','PATRIX','VIVI','VIVI (VE)','FIGARO 핸드북'];
 const $=i=>document.getElementById(i);
 let rows=[], draft=null, cfg={staff:'',key:'',model:'claude-sonnet-5'};
 
@@ -274,7 +316,7 @@ function blobToB64(b){return new Promise(r=>{const f=new FileReader();f.onload=(
 /* ───── 자동 인식 ───── */
 async function readBadge(blob){
   const s=$('aiStatus');
-  if(!cfg.key){s.className='ai';s.textContent='자동 인식 꺼짐 — 아래에 직접 입력하세요';return}
+  if(!cfg.key){s.className='ai';s.textContent='자동 인식 꺼짐 — 설정 탭에서 API 키를 넣으면 켜집니다';return}
   s.className='ai';s.innerHTML='<span class="spin"></span>방문증 글자를 읽는 중…';
   try{
     const b64=await blobToB64(blob);
@@ -306,13 +348,25 @@ $('pickBtn').addEventListener('click',()=>$('gal').click());
 
 async function startDraft(file){
   const blob=await shrink(file);
-  draft={blob,grade:'',items:[]};
-  $('preview').src=URL.createObjectURL(blob);
-  $('draft').hidden=false;
+  draft={blob,grade:'',items:[],books:[],editId:null};
+  $('draft').hidden=false; showPhoto();
   $('f-company').value='';$('f-name').value='';$('f-memo').value='';
-  renderChips();renderGrade();
+  $('saveBtn').textContent='명부에 접수';
+  renderChips();renderBooks();renderGrade();
   $('draft').scrollIntoView({behavior:'smooth',block:'start'});
   readBadge(blob);
+}
+
+/* 명부에서 불러와 수정 */
+function startEdit(r){
+  draft={blob:r.photo,grade:r.grade||'',items:[...(r.items||[])],books:[...(r.books||[])],editId:r.id};
+  $('draft').hidden=false; showPhoto();
+  $('f-company').value=r.company||'';$('f-name').value=r.name||'';$('f-memo').value=r.memo||'';
+  $('aiStatus').className='ai';$('aiStatus').textContent='기존 기록을 수정하는 중입니다';
+  $('saveBtn').textContent='수정 내용 저장';
+  renderChips();renderBooks();renderGrade();
+  $('t-new').click();
+  $('draft').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 $('cam').addEventListener('change',async e=>{
@@ -340,7 +394,7 @@ async function bulkImport(files){
     try{
       const blob=await shrink(f);
       const rec={id:Date.now()+done,at:nowStr(),staff:cfg.staff||'',
-        company:'',name:'',items:[],grade:'',memo:'',photo:blob};
+        company:'',name:'',items:[],books:[],grade:'',memo:'',photo:blob};
       if(cfg.key){
         msg.textContent='방문증 글자를 읽는 중…';
         const got=await readBadgeQuiet(blob);
@@ -382,10 +436,14 @@ async function readBadgeQuiet(blob){
 
 function renderChips(){
   $('chips').innerHTML=ITEMS.map(i=>
-    `<button data-i="${esc(i)}" aria-pressed="${draft&&draft.items.includes(i)}">${esc(i)}</button>`).join('');
+    `<button data-i="${esc(i)}" aria-pressed="${!!(draft&&draft.items.includes(i))}">${esc(i)}</button>`).join('');
+}
+function renderBooks(){
+  $('books').innerHTML=BOOKS.map(i=>
+    `<button data-i="${esc(i)}" aria-pressed="${!!(draft&&(draft.books||[]).includes(i))}">${esc(i)}</button>`).join('');
 }
 function renderGrade(){
-  [...$('grade').children].forEach(b=>b.setAttribute('aria-pressed',String(draft&&draft.grade===b.dataset.g)));
+  [...$('grade').children].forEach(b=>b.setAttribute('aria-pressed',String(!!(draft&&draft.grade===b.dataset.g))));
 }
 $('chips').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||!draft)return;
@@ -393,18 +451,38 @@ $('chips').addEventListener('click',e=>{
   draft.items=draft.items.includes(i)?draft.items.filter(x=>x!==i):[...draft.items,i];
   renderChips();
 });
+$('books').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||!draft)return;
+  const i=b.dataset.i;
+  draft.books=draft.books||[];
+  draft.books=draft.books.includes(i)?draft.books.filter(x=>x!==i):[...draft.books,i];
+  renderBooks();
+});
 $('grade').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b||!draft)return;
   draft.grade=draft.grade===b.dataset.g?'':b.dataset.g;renderGrade();
 });
-$('cancelBtn').addEventListener('click',()=>{draft=null;$('draft').hidden=true});
+$('cancelBtn').addEventListener('click',()=>{draft=null;$('draft').hidden=true;$('saveBtn').textContent='명부에 접수'});
 
 $('saveBtn').addEventListener('click',async()=>{
   if(!draft)return;
+  const company=$('f-company').value.trim(), name=$('f-name').value.trim(), memo=$('f-memo').value.trim();
+
+  if(draft.editId){
+    const r=rows.find(x=>x.id===draft.editId);
+    if(r){
+      r.company=company;r.name=name;r.memo=memo;
+      r.items=draft.items;r.books=draft.books||[];r.grade=draft.grade;
+      await dbPut(r);
+    }
+    draft=null;$('draft').hidden=true;$('saveBtn').textContent='명부에 접수';
+    render();toast('수정했습니다');$('t-list').click();return;
+  }
+
   const rec={id:Date.now(),at:nowStr(),staff:cfg.staff||'',
-    company:$('f-company').value.trim(),name:$('f-name').value.trim(),
-    items:draft.items,grade:draft.grade,memo:$('f-memo').value.trim(),photo:draft.blob};
+    company,name,items:draft.items,books:draft.books||[],grade:draft.grade,memo,photo:draft.blob};
   if(!rec.company&&!rec.name&&!rec.memo){
+    if(!draft.blob){toast('내용을 입력하거나 사진을 넣어 주세요');return;}
     if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
   }
   rows.unshift(rec); await dbPut(rec);
@@ -412,8 +490,40 @@ $('saveBtn').addEventListener('click',async()=>{
   draft=null;$('draft').hidden=true;render();usage();
 });
 
+/* 접수 카드의 사진 표시 상태 */
+function showPhoto(){
+  const has=!!(draft&&draft.blob);
+  $('preview').hidden=!has;
+  $('photoActs').hidden=!has;
+  $('noPhoto').hidden=has;
+  if(has)$('preview').src=URL.createObjectURL(draft.blob);
+}
+$('delPhoto').addEventListener('click',()=>{
+  if(!draft)return;
+  if(!confirm('이 사진을 지웁니다. 입력한 회사명과 메모는 그대로 남습니다.'))return;
+  draft.blob=null; showPhoto(); toast('사진을 지웠습니다');
+});
+$('rePhoto').addEventListener('click',()=>{$('recam').click()});
+$('rePick').addEventListener('click',()=>{$('regal').click()});
+async function replacePhoto(f){
+  if(!f||!draft)return;
+  try{
+    draft.blob=await shrink(f); showPhoto();
+    toast('사진을 교체했습니다');
+    if(cfg.key&&!draft.editId)readBadge(draft.blob);
+  }catch(err){toast(String(err))}
+}
+$('recam').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];e.target.value='';replacePhoto(f)});
+$('regal').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];e.target.value='';replacePhoto(f)});
+
+/* 한글 조합 중에는 화면을 다시 그리지 않습니다 */
+let composing=false;
+document.addEventListener('compositionstart',()=>{composing=true});
+document.addEventListener('compositionend',()=>{composing=false});
+
 /* ───── 명부 ───── */
 function render(){
+  if(typeof composing!=='undefined'&&composing){setTimeout(render,300);return}
   $('count').textContent=rows.length;
   $('staffName').textContent=cfg.staff||'미설정';
   const box=$('slips');
@@ -428,7 +538,7 @@ function render(){
         <div class="no"><span>NO.${pad(no)}</span><span>${esc(r.at)}${r.staff?' · '+esc(r.staff):''}</span></div>
         <h3>${esc(r.company||'(회사명 없음)')}</h3>
         <div class="sub">${esc(r.name||'—')}</div>
-        <div class="tags">${r.grade?`<i class="g">${r.grade}</i>`:''}${(r.items||[]).map(i=>`<i>${esc(i)}</i>`).join('')}</div>
+        <div class="tags">${r.grade?`<i class="g">${r.grade}</i>`:''}${(r.items||[]).map(i=>`<i>${esc(i)}</i>`).join('')}${(r.books||[]).map(i=>`<i class="b">${esc(i)}</i>`).join('')}</div>
         ${r.memo?`<div class="m">${esc(r.memo)}</div>`:''}
         <div class="acts"><button class="edit">수정</button><button class="del">삭제</button></div>
       </div></article>`;
@@ -441,13 +551,7 @@ $('slips').addEventListener('click',async e=>{
     if(!confirm('이 기록을 삭제합니다. 사진도 함께 지워집니다.'))return;
     rows=rows.filter(x=>x.id!==r.id);await dbDel(r.id);render();usage();return;
   }
-  if(e.target.classList.contains('edit')){
-    const c=prompt('회사명',r.company||'');if(c===null)return;
-    const n=prompt('이름 / 직함',r.name||'');if(n===null)return;
-    const m=prompt('상담 메모',r.memo||'');if(m===null)return;
-    r.company=c.trim();r.name=n.trim();r.memo=m.trim();
-    await dbPut(r);render();toast('수정했습니다');
-  }
+  if(e.target.classList.contains('edit')){ startEdit(r); }
 });
 
 /* ───── 탭 ───── */
@@ -458,20 +562,57 @@ $('slips').addEventListener('click',async e=>{
 
 /* ───── 설정 ───── */
 $('s-staffSave').addEventListener('click',()=>{cfg.staff=$('s-staff').value.trim();cfgSave();render();toast('담당자를 저장했습니다')});
-$('s-keySave').addEventListener('click',()=>{cfg.key=$('s-key').value.trim();cfg.model=$('s-model').value.trim()||'claude-sonnet-5';cfgSave();toast('저장했습니다')});
-$('s-test').addEventListener('click',async()=>{
-  const k=$('s-key').value.trim(), m=$('s-model').value.trim()||'claude-sonnet-5';
+$('s-paste').addEventListener('click',async()=>{
   const s=$('testStatus');
-  if(!k){s.className='ai err';s.textContent='키를 먼저 입력하세요';return}
-  s.className='ai';s.innerHTML='<span class="spin"></span>확인 중…';
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-      headers:{'content-type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:m,max_tokens:10,messages:[{role:'user',content:'ok 이라고만 답하세요'}]})});
-    if(!r.ok)throw new Error((await r.text()).slice(0,140));
-    cfg.key=k;cfg.model=m;cfgSave();
-    s.className='ai on';s.textContent='연결 성공 — 자동 인식이 켜졌습니다';
-  }catch(e){s.className='ai err';s.textContent='실패: '+String(e.message||e).slice(0,120)}
+    const t=(await navigator.clipboard.readText()||'').trim();
+    if(!t){s.className='ai err';s.textContent='복사된 내용이 없습니다';return}
+    $('s-key').value=t;
+    s.className='ai';s.textContent='붙여넣었습니다. 키 연결 확인을 누르세요';
+  }catch(e){
+    s.className='ai err';s.textContent='붙여넣기 권한이 없습니다. 입력칸을 길게 눌러 붙여넣기 하세요';
+  }
+});
+$('s-eye').addEventListener('click',()=>{
+  const f=$('s-key');
+  const on=f.type==='password';
+  f.type=on?'text':'password';
+  $('s-eye').textContent=on?'가리기':'보기';
+});
+$('s-keySave').addEventListener('click',()=>{cfg.key=$('s-key').value.trim();cfg.model=$('s-model').value.trim();cfgSave();toast('저장했습니다')});
+const MODEL_CANDIDATES=['claude-sonnet-5','claude-haiku-4-5-20251001','claude-opus-5','claude-sonnet-4-5-20250929'];
+async function pingModel(key,model){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model,max_tokens:10,messages:[{role:'user',content:'ok 이라고만 답하세요'}]})});
+  if(r.ok)return {ok:true};
+  return {ok:false,status:r.status,text:(await r.text()).slice(0,200)};
+}
+$('s-test').addEventListener('click',async()=>{
+  const k=$('s-key').value.trim();
+  const s=$('testStatus');
+  if(!k){s.className='ai err';s.textContent='먼저 API 키를 붙여넣으세요';return}
+  if(!/^sk-ant-/.test(k)){s.className='ai err';s.textContent='키 형식이 다릅니다. sk-ant- 으로 시작해야 합니다';return}
+
+  const first=$('s-model').value.trim();
+  const list=[...new Set([first,...MODEL_CANDIDATES].filter(Boolean))];
+  s.className='ai';s.innerHTML='<span class="spin"></span>확인 중…';
+  let lastErr='';
+  for(const m of list){
+    s.innerHTML='<span class="spin"></span>'+m+' 확인 중…';
+    let res;
+    try{ res=await pingModel(k,m) }catch(e){ lastErr='인터넷 연결을 확인하세요'; break }
+    if(res.ok){
+      cfg.key=k;cfg.model=m;cfgSave();$('s-model').value=m;
+      s.className='ai on';s.textContent='연결 성공 — 자동 인식이 켜졌습니다 ('+m+')';
+      return;
+    }
+    if(res.status===401||res.status===403){ lastErr='키가 올바르지 않거나 권한이 없습니다'; break }
+    if(res.status===429){ lastErr='요청이 많습니다. 잠시 후 다시 시도하세요'; break }
+    if(res.status===400&&/credit|balance/i.test(res.text)){ lastErr='계정 잔액이 부족합니다'; break }
+    lastErr=res.status+' '+res.text;
+  }
+  s.className='ai err';s.textContent='실패: '+lastErr;
 });
 async function usage(){
   let b=0;rows.forEach(r=>{if(r.photo)b+=r.photo.size});
@@ -493,8 +634,8 @@ $('exCsv').addEventListener('click',()=>{
   if(!rows.length){toast('내보낼 기록이 없습니다');return}
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const list=[...rows].reverse();
-  const csv='\uFEFF'+['번호,접수시각,담당자,회사명,이름직함,등급,관심품목,메모,사진파일명']
-    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.grade,(r.items||[]).join(' / '),r.memo,
+  const csv='\uFEFF'+['번호,접수시각,담당자,회사명,이름직함,등급,관심품목,샘플북요청,메모,사진파일명']
+    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.grade,(r.items||[]).join(' / '),(r.books||[]).join(' / '),r.memo,
       pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
     .join('\r\n');
   dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'ACTIVAKOREA_명부_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
@@ -522,6 +663,84 @@ $('exZip').addEventListener('click',async()=>{
   if(img.complete) (img.naturalWidth>0 ? show() : fall());
 })();
 
+/* ───── 설치 링크 ───── */
+$('s-link').addEventListener('click',async()=>{
+  const st=$('linkStatus');
+  const k=(cfg.key||$('s-key').value).trim();
+  if(!k){st.className='ai err';st.textContent='먼저 키를 넣고 연결 확인을 하세요';return}
+  const base=location.origin+location.pathname;
+  const link=base+'#k='+encodeURIComponent(btoa(unescape(encodeURIComponent(k))))+(cfg.model?'&m='+encodeURIComponent(cfg.model):'');
+  try{ await navigator.clipboard.writeText(link); st.className='ai on'; st.textContent='링크를 복사했습니다. 직원에게 보내세요'; }
+  catch(e){ st.className='ai'; st.textContent=link; }
+});
+
+/* 링크로 들어온 키를 저장하고 주소에서 지웁니다 */
+(function(){
+  const h=location.hash||'';
+  if(h.indexOf('k=')<0)return;
+  try{
+    const p=new URLSearchParams(h.replace(/^#/,''));
+    const raw=p.get('k'); if(!raw)return;
+    const key=decodeURIComponent(escape(atob(decodeURIComponent(raw))));
+    if(/^sk-ant-/.test(key)){
+      cfg.key=key;
+      const m=p.get('m'); if(m)cfg.model=decodeURIComponent(m);
+      cfgSave();
+      setTimeout(()=>toast('자동 인식이 켜졌습니다'),700);
+    }
+  }catch(e){}
+  history.replaceState(null,'',location.pathname+location.search);
+})();
+
+/* ───── 인앱 브라우저 감지 ───── */
+(function(){
+  const ua=navigator.userAgent||'';
+  const isKakao=/KAKAOTALK/i.test(ua);
+  const isOther=/(NAVER|Instagram|FBAN|FBAV|Line\/|DaumApps|everytimeApp|WhatsApp|zaloPC|BAND)/i.test(ua);
+  if(!isKakao&&!isOther)return;
+  if(sessionStorage.getItem('skipInapp'))return;
+
+  const url=location.href.split('#')[0];
+  const isiOS=/iPhone|iPad|iPod/i.test(ua);
+
+  // 카톡은 바로 기본 브라우저로 넘길 수 있습니다
+  if(isKakao){ location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url); }
+
+  const box=document.createElement('div');
+  box.id='inapp';
+  box.innerHTML=`
+    <h2>기본 브라우저에서 열어 주세요</h2>
+    <p>지금은 카카오톡·SNS 안에 있는 임시 브라우저입니다.
+    여기서 접수한 기록은 <b>다른 곳에서 열면 사라집니다.</b>
+    크롬이나 사파리로 옮겨서 사용하세요.</p>
+    <button class="go">기본 브라우저로 열기</button>
+    <div class="url">${url}</div>
+    <button class="cp">주소 복사하기</button>
+    <p>버튼이 안 되면 위 주소를 복사해서 ${isiOS?'사파리':'크롬'} 주소창에 붙여넣으세요.
+    또는 오른쪽 위 <b>⋯</b> 메뉴에서 <b>다른 브라우저로 열기</b>를 누르세요.</p>
+    <button class="skip">그래도 여기서 볼래요</button>`;
+  document.body.appendChild(box);
+
+  box.querySelector('.go').addEventListener('click',()=>{
+    if(isKakao) location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(url);
+    else if(!isiOS) location.href='intent://'+url.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';
+    else window.open(url,'_blank');
+  });
+  box.querySelector('.cp').addEventListener('click',async e=>{
+    try{ await navigator.clipboard.writeText(url); e.target.textContent='복사했습니다'; }
+    catch(err){
+      const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);
+      t.select();try{document.execCommand('copy');e.target.textContent='복사했습니다'}catch(_){e.target.textContent='주소를 길게 눌러 복사하세요'}
+      t.remove();
+    }
+  });
+  box.querySelector('.skip').addEventListener('click',()=>{
+    if(!confirm('여기서 저장한 기록은 크롬·사파리에서 보이지 않습니다.\n시험용으로만 사용하세요.\n\n계속할까요?'))return;
+    try{sessionStorage.setItem('skipInapp','1')}catch(e){}
+    box.remove();
+  });
+})();
+
 /* ───── 시작 ───── */
 (async()=>{
   cfgLoad();
@@ -529,7 +748,7 @@ $('exZip').addEventListener('click',async()=>{
   const ok=await openDB();
   if(!ok)$('storeWarn').hidden=false;
   rows=(await dbAll()).sort((a,b)=>b.id-a.id);
-  render(); usage(); renderChips();
+  render(); usage(); renderChips(); renderBooks();
   if(!cfg.staff){$('t-set').click();toast('먼저 담당자 이름을 설정하세요')}
 })();
 </script>
