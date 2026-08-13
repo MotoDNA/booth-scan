@@ -73,6 +73,8 @@ section[hidden]{display:none}
 .photoacts button.danger{color:var(--stamp);border-color:#E7C6C2}
 .nophoto{border:1px dashed var(--rule);border-radius:2px;padding:26px 12px;text-align:center;font-size:13px;color:var(--muted);background:#F5F1E7}
 .fld{margin-top:11px}
+.fld.two{display:flex;gap:10px}
+.fld.two>div{flex:1;min-width:0}
 .fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--muted);margin-bottom:4px}
 .fld input,.fld textarea{width:100%;border:0;border-bottom:1px solid var(--rule);background:transparent;padding:7px 2px;color:var(--ink)}
 .fld textarea{border:1px solid var(--rule);border-radius:2px;padding:8px;resize:vertical;min-height:58px}
@@ -100,6 +102,8 @@ section[hidden]{display:none}
 .slip .no{font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
 .slip h3{margin:3px 0 1px;font-size:15px;font-weight:800;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .slip .sub{font-size:12.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slip .contact{margin-top:3px;display:flex;flex-wrap:wrap;gap:9px}
+.slip .contact a{font-family:var(--mono);font-size:11.5px;color:#1F4E6B;text-decoration:none;border-bottom:1px solid #C3D3DE;word-break:break-all}
 .slip .tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
 .slip .tags i{font-style:normal;font-size:10.5px;font-weight:700;padding:3px 6px;border:1px solid var(--rule);border-radius:2px;color:var(--muted)}
 .slip .tags i.g{background:var(--stamp);color:#fff;border-color:var(--stamp)}
@@ -168,7 +172,7 @@ section[hidden]{display:none}
   <input type="file" id="gal" accept="image/*" multiple hidden>
   <input type="file" id="recam" accept="image/*" capture="environment" hidden>
   <input type="file" id="regal" accept="image/*" hidden>
-  <button class="shoot" id="shootBtn"><b>방문증 촬영</b><span>휴대폰 카메라가 열립니다</span></button>
+  <button class="shoot" id="shootBtn"><b>방문증 · 명함 촬영</b><span>휴대폰 카메라가 열립니다</span></button>
   <button class="shoot alt" id="pickBtn"><b>사진첩에서 선택</b><span>여러 장을 한 번에 불러올 수 있습니다</span></button>
 
   <div class="bulk" id="bulk" hidden>
@@ -178,7 +182,7 @@ section[hidden]{display:none}
   </div>
 
   <div class="card" id="draft" hidden>
-    <img class="shot" id="preview" alt="촬영한 방문증">
+    <img class="shot" id="preview" alt="촬영한 방문증 또는 명함">
     <div class="photoacts" id="photoActs">
       <button id="rePhoto">사진 다시 찍기</button>
       <button id="rePick">사진첩에서 고르기</button>
@@ -187,7 +191,10 @@ section[hidden]{display:none}
     <div class="nophoto" id="noPhoto" hidden>사진 없음 — 메모만 저장됩니다</div>
     <div class="ai" id="aiStatus"></div>
     <div class="fld"><label>회사명</label><input id="f-company" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 액티바코리아"></div>
-    <div class="fld"><label>이름 / 직함</label><input id="f-name" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 최환준 부장"></div>
+    <div class="fld"><label>성함</label><input id="f-name" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 최환준 / Hwanjun Choi"></div>
+    <div class="fld"><label>직함</label><input id="f-title" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 부장"></div>
+    <div class="fld two"><div><label>전화번호</label><input id="f-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="010-0000-0000"></div><div><label>이메일</label><input id="f-email" type="email" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="name@company.com"></div></div>
+    <div class="fld"><label>회사 주소</label><input id="f-addr" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="예: 경기도 고양시 …"></div>
     <div class="fld"><label>관심 품목</label>
       <div class="chips" id="chips"></div>
     </div>
@@ -324,19 +331,20 @@ async function readBadge(blob){
       method:'POST',
       headers:{'content-type':'application/json','x-api-key':cfg.key,
         'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:cfg.model||'claude-sonnet-5',max_tokens:300,
+      body:JSON.stringify({model:cfg.model||'claude-sonnet-5',max_tokens:600,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
-          {type:'text',text:'전시회 방문증 사진입니다. 인쇄된 글자에서 회사명과 사람 이름·직함을 읽어 주세요. 오직 JSON만 출력하고 다른 말은 쓰지 마세요. 형식: {"company":"회사명","name":"이름 직함"} 읽을 수 없으면 빈 문자열로 두세요.'}
+          {type:'text',text:'전시회 방문증 또는 명함 사진입니다. 인쇄된 글자를 읽어 아래 항목을 뽑아 주세요.\n- company: 회사명 (한글이 있으면 한글 우선, 없으면 영문)\n- name: 사람 이름만 (한글·영문·한자 중 인쇄된 그대로. 한글과 영문이 함께 있으면 한글)\n- title: 직함 (부장, 대표, Manager 등). 없으면 빈 문자열\n- phone: 휴대폰 번호 우선, 없으면 대표번호. 숫자와 하이픈만\n- email: 이메일 주소\n- address: 회사 주소\n읽을 수 없는 항목은 빈 문자열로 두세요. 추측하지 말고 보이는 대로만 적으세요.\n오직 JSON만 출력하고 다른 말은 절대 쓰지 마세요.\n{"company":"","name":"","title":"","phone":"","email":"","address":""}'}
         ]}]})
     });
     if(!r.ok){const e=await r.text();throw new Error(r.status+' '+e.slice(0,120))}
     const d=await r.json();
     const txt=(d.content||[]).map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
     const j=JSON.parse(txt.slice(txt.indexOf('{'),txt.lastIndexOf('}')+1));
-    if(j.company)$('f-company').value=j.company;
-    if(j.name)$('f-name').value=j.name;
-    s.className='ai on';s.textContent='자동으로 채웠습니다 — 틀린 곳은 고쳐 주세요';
+    const map={company:'f-company',name:'f-name',title:'f-title',phone:'f-phone',email:'f-email',address:'f-addr'};
+    let got=0;
+    Object.keys(map).forEach(k=>{ if(j[k]){$(map[k]).value=String(j[k]).trim();got++} });
+    s.className='ai on';s.textContent=got?('자동으로 '+got+'개 항목을 채웠습니다 — 틀린 곳은 고쳐 주세요'):'글자를 읽지 못했습니다. 직접 입력하세요';
   }catch(err){
     s.className='ai err';s.textContent='자동 인식 실패 — 직접 입력하세요 ('+String(err.message||err).slice(0,60)+')';
   }
@@ -350,7 +358,7 @@ async function startDraft(file){
   const blob=await shrink(file);
   draft={blob,grade:'',items:[],books:[],editId:null};
   $('draft').hidden=false; showPhoto();
-  $('f-company').value='';$('f-name').value='';$('f-memo').value='';
+  ['f-company','f-name','f-title','f-phone','f-email','f-addr','f-memo'].forEach(i=>$(i).value='');
   $('saveBtn').textContent='명부에 접수';
   renderChips();renderBooks();renderGrade();
   $('draft').scrollIntoView({behavior:'smooth',block:'start'});
@@ -361,7 +369,9 @@ async function startDraft(file){
 function startEdit(r){
   draft={blob:r.photo,grade:r.grade||'',items:[...(r.items||[])],books:[...(r.books||[])],editId:r.id};
   $('draft').hidden=false; showPhoto();
-  $('f-company').value=r.company||'';$('f-name').value=r.name||'';$('f-memo').value=r.memo||'';
+  $('f-company').value=r.company||'';$('f-name').value=r.name||'';$('f-title').value=r.title||'';
+  $('f-phone').value=r.phone||'';$('f-email').value=r.email||'';$('f-addr').value=r.addr||'';
+  $('f-memo').value=r.memo||'';
   $('aiStatus').className='ai';$('aiStatus').textContent='기존 기록을 수정하는 중입니다';
   $('saveBtn').textContent='수정 내용 저장';
   renderChips();renderBooks();renderGrade();
@@ -394,11 +404,12 @@ async function bulkImport(files){
     try{
       const blob=await shrink(f);
       const rec={id:Date.now()+done,at:nowStr(),staff:cfg.staff||'',
-        company:'',name:'',items:[],books:[],grade:'',memo:'',photo:blob};
+        company:'',name:'',title:'',phone:'',email:'',addr:'',items:[],books:[],grade:'',memo:'',photo:blob};
       if(cfg.key){
         msg.textContent='방문증 글자를 읽는 중…';
         const got=await readBadgeQuiet(blob);
-        if(got){rec.company=got.company||'';rec.name=got.name||'';read++}
+        if(got){rec.company=got.company||'';rec.name=got.name||'';rec.title=got.title||'';
+          rec.phone=got.phone||'';rec.email=got.email||'';rec.addr=got.address||'';read++}
       }
       rows.unshift(rec); await dbPut(rec);
     }catch(err){ failed++ }
@@ -421,10 +432,10 @@ async function readBadgeQuiet(blob){
       method:'POST',
       headers:{'content-type':'application/json','x-api-key':cfg.key,
         'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:cfg.model||'claude-sonnet-5',max_tokens:300,
+      body:JSON.stringify({model:cfg.model||'claude-sonnet-5',max_tokens:600,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
-          {type:'text',text:'전시회 방문증 사진입니다. 인쇄된 글자에서 회사명과 사람 이름·직함을 읽어 주세요. 오직 JSON만 출력하고 다른 말은 쓰지 마세요. 형식: {"company":"회사명","name":"이름 직함"} 읽을 수 없으면 빈 문자열로 두세요.'}
+          {type:'text',text:'전시회 방문증 또는 명함 사진입니다. 인쇄된 글자를 읽어 아래 항목을 뽑아 주세요.\n- company: 회사명 (한글이 있으면 한글 우선, 없으면 영문)\n- name: 사람 이름만 (한글·영문·한자 중 인쇄된 그대로. 한글과 영문이 함께 있으면 한글)\n- title: 직함 (부장, 대표, Manager 등). 없으면 빈 문자열\n- phone: 휴대폰 번호 우선, 없으면 대표번호. 숫자와 하이픈만\n- email: 이메일 주소\n- address: 회사 주소\n읽을 수 없는 항목은 빈 문자열로 두세요. 추측하지 말고 보이는 대로만 적으세요.\n오직 JSON만 출력하고 다른 말은 절대 쓰지 마세요.\n{"company":"","name":"","title":"","phone":"","email":"","address":""}'}
         ]}]})
     });
     if(!r.ok)return null;
@@ -466,12 +477,14 @@ $('cancelBtn').addEventListener('click',()=>{draft=null;$('draft').hidden=true;$
 
 $('saveBtn').addEventListener('click',async()=>{
   if(!draft)return;
-  const company=$('f-company').value.trim(), name=$('f-name').value.trim(), memo=$('f-memo').value.trim();
+  const v=i=>$(i).value.trim();
+  const company=v('f-company'), name=v('f-name'), title=v('f-title'),
+        phone=v('f-phone'), email=v('f-email'), addr=v('f-addr'), memo=v('f-memo');
 
   if(draft.editId){
     const r=rows.find(x=>x.id===draft.editId);
     if(r){
-      r.company=company;r.name=name;r.memo=memo;
+      r.company=company;r.name=name;r.title=title;r.phone=phone;r.email=email;r.addr=addr;r.memo=memo;
       r.items=draft.items;r.books=draft.books||[];r.grade=draft.grade;
       await dbPut(r);
     }
@@ -480,8 +493,8 @@ $('saveBtn').addEventListener('click',async()=>{
   }
 
   const rec={id:Date.now(),at:nowStr(),staff:cfg.staff||'',
-    company,name,items:draft.items,books:draft.books||[],grade:draft.grade,memo,photo:draft.blob};
-  if(!rec.company&&!rec.name&&!rec.memo){
+    company,name,title,phone,email,addr,items:draft.items,books:draft.books||[],grade:draft.grade,memo,photo:draft.blob};
+  if(!rec.company&&!rec.name&&!rec.phone&&!rec.email&&!rec.memo){
     if(!draft.blob){toast('내용을 입력하거나 사진을 넣어 주세요');return;}
     if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
   }
@@ -537,7 +550,8 @@ function render(){
       <div class="body">
         <div class="no"><span>NO.${pad(no)}</span><span>${esc(r.at)}${r.staff?' · '+esc(r.staff):''}</span></div>
         <h3>${esc(r.company||'(회사명 없음)')}</h3>
-        <div class="sub">${esc(r.name||'—')}</div>
+        <div class="sub">${esc([r.name,r.title].filter(Boolean).join(' ')||'—')}</div>
+        ${(r.phone||r.email)?`<div class="contact">${r.phone?`<a href="tel:${esc(r.phone.replace(/[^0-9+]/g,''))}">${esc(r.phone)}</a>`:''}${r.email?`<a href="mailto:${esc(r.email)}">${esc(r.email)}</a>`:''}</div>`:''}
         <div class="tags">${r.grade?`<i class="g">${r.grade}</i>`:''}${(r.items||[]).map(i=>`<i>${esc(i)}</i>`).join('')}${(r.books||[]).map(i=>`<i class="b">${esc(i)}</i>`).join('')}</div>
         ${r.memo?`<div class="m">${esc(r.memo)}</div>`:''}
         <div class="acts"><button class="edit">수정</button><button class="del">삭제</button></div>
@@ -634,8 +648,8 @@ $('exCsv').addEventListener('click',()=>{
   if(!rows.length){toast('내보낼 기록이 없습니다');return}
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const list=[...rows].reverse();
-  const csv='\uFEFF'+['번호,접수시각,담당자,회사명,이름직함,등급,관심품목,샘플북요청,메모,사진파일명']
-    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.grade,(r.items||[]).join(' / '),(r.books||[]).join(' / '),r.memo,
+  const csv='\uFEFF'+['번호,접수시각,담당자,회사명,성함,직함,전화번호,이메일,회사주소,등급,관심품목,샘플북요청,메모,사진파일명']
+    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.title,r.phone,r.email,r.addr,r.grade,(r.items||[]).join(' / '),(r.books||[]).join(' / '),r.memo,
       pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
     .join('\r\n');
   dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'ACTIVAKOREA_명부_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
