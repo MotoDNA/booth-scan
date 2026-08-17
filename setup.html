@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Booth Desk · Setup</title>
+<style>
+:root{
+  --ink:#1B1A17; --bg:#FAF7F3; --card:#FFFFFF; --brand:#F26A21;
+  --soft:#FDEEE4; --line:#E7DFD5; --mut:#8A8378; --sub:#5C564E;
+  --ok:#3E7D52; --blue:#3E7AA6; --warn:#8E2E1D; --warnbg:#FBE4E0;
+  --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:16px; --sh:0 1px 2px rgba(27,26,23,.05),0 8px 22px rgba(27,26,23,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font:400 16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","Noto Sans",
+       "Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+  padding:0 0 64px;
+}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px}
+button{font:inherit;border:0;cursor:pointer;background:none;color:inherit}
+
+/* ── 출입증을 본뜬 머리글 ── */
+.badge{
+  background:var(--ink); color:#fff; border-radius:0 0 var(--r) var(--r);
+  padding:26px 22px 22px; position:relative; overflow:hidden;
+}
+.badge::before{
+  content:""; position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:96px; height:9px; border-radius:0 0 9px 9px; background:#3A3730;
+}
+.mark{display:flex; align-items:baseline; gap:6px; margin-top:14px}
+.mark b{font-size:1.5rem; font-weight:800; letter-spacing:-.01em; color:var(--brand)}
+.mark span{font-size:1.15rem; font-weight:400; color:#E8E2D9}
+.meta{
+  margin-top:12px; display:flex; flex-wrap:wrap; gap:7px;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.05em; color:#B9B2A6;
+}
+.meta i{font-style:normal; background:#2A2721; border-radius:6px; padding:4px 9px}
+.meta i.hot{background:var(--brand); color:#fff; font-weight:700}
+.title{margin-top:18px; font-size:1.28rem; font-weight:800; line-height:1.35; letter-spacing:-.02em}
+.lede{margin-top:8px; font-size:.85rem; color:#B9B2A6; line-height:1.6}
+
+/* ── 언어 전환 ── */
+.langbar{display:flex; gap:7px; margin-top:20px}
+.langbar button{
+  flex:1; padding:11px 0; border-radius:10px; background:#2A2721; color:#CFC7BA;
+  font-size:.8rem; font-weight:700; letter-spacing:.02em;
+}
+.langbar button[aria-pressed=true]{background:#fff; color:var(--ink)}
+
+/* ── 진행 표시 ── */
+.prog{
+  display:flex; align-items:center; gap:12px; margin-top:22px;
+  background:var(--card); border-radius:var(--r); box-shadow:var(--sh); padding:15px 18px;
+}
+.prog .bar{flex:1; height:7px; background:var(--line); border-radius:999px; overflow:hidden}
+.prog .bar i{display:block; height:100%; width:0; background:var(--brand); transition:width .3s ease}
+.prog .n{font-family:var(--mono); font-size:.72rem; font-weight:700; color:var(--mut); flex:0 0 auto}
+
+/* ── 관리자 칸 ── */
+.admin{
+  margin-top:16px; background:var(--card); border-radius:var(--r);
+  box-shadow:var(--sh); overflow:hidden; border:1.5px dashed var(--line);
+}
+.admin > summary{
+  list-style:none; padding:16px 18px; cursor:pointer;
+  display:flex; align-items:center; gap:10px; font-size:.8rem; font-weight:700;
+}
+.admin > summary::-webkit-details-marker{display:none}
+.admin > summary::after{content:"+"; margin-left:auto; color:var(--mut); font-weight:700}
+.admin[open] > summary::after{content:"−"}
+.admin .body{padding:0 18px 18px}
+.admin label{display:block; font-size:.62rem; font-weight:800; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--mut); margin:14px 0 6px}
+.admin input{
+  width:100%; background:var(--bg); border:1.5px solid transparent; border-radius:10px;
+  padding:12px 13px; font-family:var(--mono); font-size:.78rem; color:var(--ink);
+}
+.admin input:focus{outline:0; border-color:var(--brand); background:#fff}
+.admin .go{
+  width:100%; margin-top:14px; padding:14px; border-radius:11px;
+  background:var(--ink); color:#fff; font-size:.82rem; font-weight:700;
+}
+.out{
+  margin-top:12px; background:var(--bg); border-radius:10px; padding:12px;
+  font-family:var(--mono); font-size:.68rem; word-break:break-all; color:var(--sub);
+  max-height:110px; overflow:auto;
+}
+.copy{width:100%; margin-top:9px; padding:12px; border-radius:10px;
+  background:var(--soft); color:var(--brand); font-size:.78rem; font-weight:700}
+
+/* ── 경고 ── */
+.warn{
+  background:var(--warnbg); color:var(--warn); border-radius:12px;
+  padding:14px 16px; font-size:.78rem; line-height:1.6; margin-top:14px;
+}
+.warn b{font-weight:800}
+
+/* ── 단계 ── */
+.steps{margin-top:26px; counter-reset:s}
+.step{
+  background:var(--card); border-radius:var(--r); box-shadow:var(--sh);
+  padding:18px 18px 18px 16px; margin-bottom:11px; display:flex; gap:14px;
+  align-items:flex-start; cursor:pointer; transition:opacity .2s;
+}
+.step .tick{
+  flex:0 0 30px; height:30px; border-radius:9px; background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:.76rem; font-weight:700; color:var(--mut);
+  counter-increment:s; transition:background .2s,color .2s;
+}
+.step .tick::before{content:counter(s,decimal-leading-zero)}
+.step[data-done=true]{opacity:.5}
+.step[data-done=true] .tick{background:var(--ok); color:#fff}
+.step[data-done=true] .tick::before{content:"✓"}
+.step h3{font-size:.92rem; font-weight:800; letter-spacing:-.01em}
+.step p{margin-top:6px; font-size:.81rem; color:var(--sub); line-height:1.65}
+.step .hint{
+  margin-top:9px; font-size:.74rem; color:var(--mut); background:var(--bg);
+  border-radius:9px; padding:10px 12px; line-height:1.6;
+}
+.step code{font-family:var(--mono); font-size:.9em; background:var(--soft);
+  color:var(--brand); border-radius:5px; padding:1px 5px}
+
+/* ── 안내 묶음 ── */
+.note{margin-top:26px; background:var(--card); border-radius:var(--r); box-shadow:var(--sh); padding:20px}
+.note h4{font-size:.62rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--mut)}
+.note ul{margin-top:12px; padding-left:0; list-style:none}
+.note li{font-size:.81rem; line-height:1.65; color:var(--sub); padding-left:16px; position:relative; margin-top:9px}
+.note li::before{content:"—"; position:absolute; left:0; color:var(--line)}
+.note li b{color:var(--ink); font-weight:700}
+.qa{border-top:1px solid var(--line); padding-top:14px; margin-top:14px}
+.qa:first-of-type{border-top:0; padding-top:0; margin-top:12px}
+.qa b{display:block; font-size:.82rem; font-weight:800}
+.qa span{display:block; margin-top:5px; font-size:.79rem; color:var(--sub); line-height:1.65}
+
+.foot{margin-top:26px; text-align:center; font-family:var(--mono);
+  font-size:.62rem; letter-spacing:.08em; color:#CDC3B7}
+
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="badge">
+  <div class="wrap" style="padding:0">
+    <div class="mark"><b>ACTIVA</b><span>KOREA</span></div>
+    <div class="meta">
+      <i class="hot">HALL 7 · D504</i><i>K-PRINT 2026</i><i>AUG 19–22</i>
+    </div>
+    <h1 class="title" data-t="title">Set up the booth desk on your phone</h1>
+    <p class="lede" data-t="lede">Six short steps. About three minutes. Ask the booth manager if anything here does not match what you see.</p>
+    <div class="langbar" id="langbar">
+      <button data-l="en" aria-pressed="true">English</button>
+      <button data-l="zh" aria-pressed="false">简体中文</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="prog">
+    <div class="bar"><i id="fill"></i></div>
+    <div class="n" id="progn">0 / 6</div>
+  </div>
+
+  <!-- 관리자 전용 -->
+  <details class="admin" id="admin">
+    <summary><span data-t="admT">Booth manager only — create the setup link</span></summary>
+    <div class="body">
+      <p style="font-size:.79rem;color:var(--sub);line-height:1.6" data-t="admP">
+        Paste your two values below. This page builds the one-tap setup link that carries both.
+        Nothing is saved or sent anywhere; it stays in this browser tab.</p>
+
+      <label data-t="admK">Claude API key</label>
+      <input id="k" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="sk-ant-...">
+
+      <label data-t="admS">Google Sheet web app URL</label>
+      <input id="s" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="https://script.google.com/macros/s/.../exec">
+
+      <label data-t="admB">App address</label>
+      <input id="b" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" value="https://motodna.github.io/booth-scan/">
+
+      <button class="go" id="make" data-t="admGo">Create the setup link</button>
+      <div class="out" id="out" hidden></div>
+      <button class="copy" id="cp" hidden data-t="admCp">Copy the link</button>
+
+      <div class="warn" data-t="admW">
+        <b>Anyone holding this link can use your API key</b>, and the usage is billed to your account.
+        Send it in a one-to-one message only, delete the message afterwards, and delete the key when the show ends.
+      </div>
+    </div>
+  </details>
+
+  <div class="steps" id="steps">
+
+    <article class="step" data-done="false">
+      <div class="tick"></div>
+      <div>
+        <h3 data-t="s1h">Open the setup link the manager sent you</h3>
+        <p data-t="s1p">Tap it once. The recognition key and the shared sheet connection are applied automatically. You will see a short confirmation at the bottom of the screen.</p>
+        <div class="hint" data-t="s1n">Open it in Safari or Chrome. If it opens inside a messaging app, tap the menu and choose “Open in browser”.</div>
+      </div>
+    </article>
+
+    <article class="step" data-done="false">
+      <div class="tick"></div>
+      <div>
+        <h3 data-t="s2h">Add the app to your home screen</h3>
+        <p data-t="s2p">This keeps your records safe between sessions and removes the browser bars.</p>
+        <div class="hint" data-t="s2n">iPhone: Share button → Add to Home Screen. Android: menu (⋮) → Add to Home screen. Huawei: menu → Add to desktop.</div>
+      </div>
+    </article>
+
+    <article class="step" data-done="false">
+      <div class="tick"></div>
+      <div>
+        <h3 data-t="s3h">Launch it from the home screen icon</h3>
+        <p data-t="s3p">Always start the app from this icon, not from a browser tab. Check the version tag next to the title at the top.</p>
+        <div class="hint" data-t="s3n">It should read <code>v1.7.3</code>. If it shows an older number, delete the icon and add it again.</div>
+      </div>
+    </article>
+
+    <article class="step" data-done="false">
+      <div class="tick"></div>
+      <div>
+        <h3 data-t="s4h">Enter your own name</h3>
+        <p data-t="s4p">Settings → Staff name → type your name → Save. Every visitor you record is tagged with it, so the team can tell who spoke to whom.</p>
+        <div class="hint" data-t="s4n">Use the same spelling all four days. Two spellings become two people in the report.</div>
+      </div>
+    </article>
+
+    <article class="step" data-done="false">
+      <div class="tick"></div>
+      <div>
+        <h3 data-t="s5h">Check that sharing is live</h3>
+        <p data-t="s5p">Settings → Live sharing → Check connection. A green line confirms it. Then open the List tab: you should see your name under “Online now”.</p>
+        <div class="hint" data-t="s5n">If your name is missing there, your phone is not sending to the sheet. Tell the booth manager before the doors open.</div>
+      </div>
+    </article>
+
+    <article class="step" data-done="false">
+      <div class="tick"></div>
+      <div>
+        <h3 data-t="s6h">Record one test visitor</h3>
+        <p data-t="s6p">Photograph any business card, or use “Type manually”. Save it, then confirm the entry appears on the shared sheet. Delete it afterwards.</p>
+        <div class="hint" data-t="s6n">Do this before the first visitor arrives, not during the rush.</div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="note">
+    <h4 data-t="dayH">Every evening, before you leave</h4>
+    <ul>
+      <li data-t="day1"><b>Export CSV</b> and <b>Save all photos</b>, then send both files to your own email.</li>
+      <li data-t="day2">Photos live only on your phone. The shared sheet holds text, never images.</li>
+      <li data-t="day3">Charge the phone and the power bank overnight. Recognition uses more battery than usual.</li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <h4 data-t="tsH">If something goes wrong</h4>
+    <div class="qa"><b data-t="q1">Recognition does not fill anything in</b>
+      <span data-t="a1">Open the setup link again. The key may not have been applied. You can still type everything by hand and the record is just as valid.</span></div>
+    <div class="qa"><b data-t="q2">The counter shows “Queued”</b>
+      <span data-t="a2">Nothing is lost. The phone saved it and will upload as soon as the connection returns. Hall Wi-Fi drops often; keep recording.</span></div>
+    <div class="qa"><b data-t="q3">A card was cropped badly</b>
+      <span data-t="a3">Tap “View original” on the capture screen to see the untouched photo, or turn off Auto edge crop in Settings.</span></div>
+    <div class="qa"><b data-t="q4">Records are missing from the sheet</b>
+      <span data-t="a4">Settings → Re-send the whole list to the sheet. Existing rows are overwritten, not duplicated, so it is always safe to press.</span></div>
+  </div>
+
+  <div class="foot">ACTIVA KOREA · BOOTH DESK · K-PRINT 2026</div>
+</div>
+
+<script>
+/* ═══ 두 언어 ═══ */
+const T={
+en:{
+ title:'Set up the booth desk on your phone',
+ lede:'Six short steps. About three minutes. Ask the booth manager if anything here does not match what you see.',
+ admT:'Booth manager only — create the setup link',
+ admP:'Paste your two values below. This page builds the one-tap setup link that carries both. Nothing is saved or sent anywhere; it stays in this browser tab.',
+ admK:'Claude API key', admS:'Google Sheet web app URL', admB:'App address',
+ admGo:'Create the setup link', admCp:'Copy the link',
+ admW:'<b>Anyone holding this link can use your API key</b>, and the usage is billed to your account. Send it in a one-to-one message only, delete the message afterwards, and delete the key when the show ends.',
+ s1h:'Open the setup link the manager sent you',
+ s1p:'Tap it once. The recognition key and the shared sheet connection are applied automatically. You will see a short confirmation at the bottom of the screen.',
+ s1n:'Open it in Safari or Chrome. If it opens inside a messaging app, tap the menu and choose “Open in browser”.',
+ s2h:'Add the app to your home screen',
+ s2p:'This keeps your records safe between sessions and removes the browser bars.',
+ s2n:'iPhone: Share button → Add to Home Screen. Android: menu (⋮) → Add to Home screen. Huawei: menu → Add to desktop.',
+ s3h:'Launch it from the home screen icon',
+ s3p:'Always start the app from this icon, not from a browser tab. Check the version tag next to the title at the top.',
+ s3n:'It should read <code>v1.7.3</code>. If it shows an older number, delete the icon and add it again.',
+ s4h:'Enter your own name',
+ s4p:'Settings → Staff name → type your name → Save. Every visitor you record is tagged with it, so the team can tell who spoke to whom.',
+ s4n:'Use the same spelling all four days. Two spellings become two people in the report.',
+ s5h:'Check that sharing is live',
+ s5p:'Settings → Live sharing → Check connection. A green line confirms it. Then open the List tab: you should see your name under “Online now”.',
+ s5n:'If your name is missing there, your phone is not sending to the sheet. Tell the booth manager before the doors open.',
+ s6h:'Record one test visitor',
+ s6p:'Photograph any business card, or use “Type manually”. Save it, then confirm the entry appears on the shared sheet. Delete it afterwards.',
+ s6n:'Do this before the first visitor arrives, not during the rush.',
+ dayH:'Every evening, before you leave',
+ day1:'<b>Export CSV</b> and <b>Save all photos</b>, then send both files to your own email.',
+ day2:'Photos live only on your phone. The shared sheet holds text, never images.',
+ day3:'Charge the phone and the power bank overnight. Recognition uses more battery than usual.',
+ tsH:'If something goes wrong',
+ q1:'Recognition does not fill anything in',
+ a1:'Open the setup link again. The key may not have been applied. You can still type everything by hand and the record is just as valid.',
+ q2:'The counter shows “Queued”',
+ a2:'Nothing is lost. The phone saved it and will upload as soon as the connection returns. Hall Wi-Fi drops often; keep recording.',
+ q3:'A card was cropped badly',
+ a3:'Tap “View original” on the capture screen to see the untouched photo, or turn off Auto edge crop in Settings.',
+ q4:'Records are missing from the sheet',
+ a4:'Settings → Re-send the whole list to the sheet. Existing rows are overwritten, not duplicated, so it is always safe to press.',
+ done:'done', copied:'Copied', copyFail:'Press and hold the text above to copy',
+ needKey:'Enter the API key first', badKey:'The key should start with sk-ant-',
+ badSheet:'The URL should start with script.google.com and end with /exec'
+},
+zh:{
+ title:'在手机上完成展位登记台设置',
+ lede:'六个步骤，约三分钟。若与实际画面不符，请询问展位负责人。',
+ admT:'仅限展位负责人 — 生成安装链接',
+ admP:'在下方填入两项内容，本页会生成一条包含二者的安装链接。内容不会被保存或发送到任何地方，只留在本浏览器标签页内。',
+ admK:'Claude API 密钥', admS:'Google 表格网页应用网址', admB:'应用网址',
+ admGo:'生成安装链接', admCp:'复制链接',
+ admW:'<b>任何拿到此链接的人都能使用您的 API 密钥</b>，费用记在您的账户上。请仅通过一对一消息发送，发送后删除该消息，展会结束后请删除密钥。',
+ s1h:'打开负责人发来的安装链接',
+ s1p:'点击一次即可。识别密钥和共享表格连接会自动设置好，屏幕下方会出现简短提示。',
+ s1n:'请在 Safari 或 Chrome 中打开。若在聊天软件内打开，请点菜单选择“在浏览器中打开”。',
+ s2h:'把应用添加到桌面',
+ s2p:'这样记录不会因关闭页面而丢失，也不会有浏览器工具栏挡住画面。',
+ s2n:'iPhone：分享按钮 → 添加到主屏幕。安卓：菜单（⋮）→ 添加到主屏幕。华为：菜单 → 添加到桌面。',
+ s3h:'从桌面图标启动',
+ s3p:'请始终从这个图标启动，而不是浏览器标签页。启动后查看标题旁的版本标签。',
+ s3n:'应显示 <code>v1.7.3</code>。若是更早的版本号，请删除图标后重新添加。',
+ s4h:'填写您本人的姓名',
+ s4p:'设置 → 负责人姓名 → 输入姓名 → 保存。您登记的每位访客都会带上这个名字，团队才能分清由谁接待。',
+ s4n:'四天内请使用同一种写法。两种写法会被统计成两个人。',
+ s5h:'确认共享已连通',
+ s5p:'设置 → 实时共享 → 检查连接，出现绿色提示即为成功。然后打开名录页，应能在“在线”中看到自己的名字。',
+ s5n:'若看不到自己的名字，说明这台手机没有向表格发送数据。请在开馆前告知展位负责人。',
+ s6h:'试登记一位访客',
+ s6p:'拍摄任意一张名片，或使用“手动输入”。保存后确认该条记录出现在共享表格中，随后删除即可。',
+ s6n:'请在第一位访客到来之前完成，不要等到忙碌时。',
+ dayH:'每天离场前',
+ day1:'执行<b>导出 CSV</b> 和<b>保存全部照片</b>，并把两个文件发送到自己的邮箱。',
+ day2:'照片只保存在手机中。共享表格只保存文字，不含图片。',
+ day3:'当晚给手机和充电宝充满电。开启识别会比平时更耗电。',
+ tsH:'遇到问题时',
+ q1:'识别没有自动填入任何内容',
+ a1:'请重新打开安装链接，密钥可能没有生效。此时仍可手动输入，记录同样有效。',
+ q2:'计数处显示“待发送”',
+ a2:'数据没有丢失。已保存在手机中，连接恢复后会自动上传。展馆 Wi-Fi 经常中断，请继续登记。',
+ q3:'名片被裁切得不对',
+ a3:'在拍摄画面点击“查看原图”即可看到未处理的照片，或在设置中关闭自动裁边。',
+ q4:'表格里缺少一些记录',
+ a4:'设置 → 将名录全部重新发送到表格。表格中已有的记录会被覆盖而不会重复，随时可以放心按下。',
+ done:'已完成', copied:'已复制', copyFail:'长按上方文字进行复制',
+ needKey:'请先填入 API 密钥', badKey:'密钥应以 sk-ant- 开头',
+ badSheet:'网址应以 script.google.com 开头、/exec 结尾'
+}};
+
+let lang='en';
+const $=i=>document.getElementById(i);
+
+function apply(){
+  const D=T[lang];
+  document.documentElement.lang = lang==='zh' ? 'zh-CN' : 'en';
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const v=D[el.dataset.t]; if(v!==undefined) el.innerHTML=v;
+  });
+  [...$('langbar').children].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===lang)));
+  count();
+}
+$('langbar').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  lang=b.dataset.l; apply();
+});
+
+/* ═══ 진행 표시 ═══ */
+function count(){
+  const all=[...document.querySelectorAll('.step')];
+  const n=all.filter(s=>s.dataset.done==='true').length;
+  $('fill').style.width=(n/all.length*100)+'%';
+  $('progn').textContent=n+' / '+all.length;
+}
+document.getElementById('steps').addEventListener('click',e=>{
+  const s=e.target.closest('.step'); if(!s)return;
+  s.dataset.done = s.dataset.done==='true' ? 'false' : 'true';
+  count();
+});
+
+/* ═══ 설치 링크 만들기 ═══ */
+function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+
+$('make').addEventListener('click',()=>{
+  const D=T[lang];
+  const key=$('k').value.trim(), sheet=$('s').value.trim();
+  let base=$('b').value.trim() || 'https://motodna.github.io/booth-scan/';
+  if(!base.endsWith('/')) base+='/';
+  if(!key){ alert(D.needKey); return; }
+  if(!/^sk-ant-/.test(key)){ alert(D.badKey); return; }
+  if(sheet && !/^https:\/\/script\.google\.com\/.+\/exec$/.test(sheet)){ alert(D.badSheet); return; }
+
+  let link = base + '?k=' + encodeURIComponent(b64(key));
+  if(sheet) link += '&s=' + encodeURIComponent(btoa(sheet));
+
+  $('out').hidden=false; $('out').textContent=link;
+  $('cp').hidden=false; $('cp').dataset.link=link;
+});
+
+$('cp').addEventListener('click',async()=>{
+  const D=T[lang], link=$('cp').dataset.link||'';
+  try{ await navigator.clipboard.writeText(link); $('cp').textContent=D.copied; }
+  catch(e){ $('cp').textContent=D.copyFail; }
+  setTimeout(()=>{ $('cp').textContent=D.admCp; },2200);
+});
+
+apply();
+</script>
+</body>
+</html>
