@@ -378,9 +378,9 @@ section[hidden]{display:none}
   </div>
   <div class="setrow">
     <h4 data-i18n="sAiH">자동 인식 (선택)</h4>
-    <p>켜면 촬영 즉시 회사명과 이름이 자동으로 채워집니다. 키는 이 휴대폰에만 저장되며 어디로도 전송되지 않습니다.<br><br>
+    <p data-i18n-html="pAi">켜면 촬영 즉시 회사명과 이름이 자동으로 채워집니다. 키는 이 휴대폰에만 저장되며 어디로도 전송되지 않습니다.<br><br>
     <b>켜는 방법</b> — 컴퓨터에서 console.anthropic.com 접속 → 왼쪽 API keys → Create Key → 생성된 sk-ant- 로 시작하는 문자열을 복사해 아래에 붙여넣고 <b>키 연결 확인</b>을 누르세요. 모델명은 비워 두면 알아서 맞는 것을 찾습니다.</p>
-    <input id="s-key" type="password" placeholder="sk-ant-... (선택 사항)" autocomplete="off">
+    <input id="s-key" type="password" data-i18n-ph="phKey" placeholder="sk-ant-... (선택 사항)" autocomplete="off">
     <div class="keyrow">
       <button class="sec" id="s-paste" data-i18n="bPaste">붙여넣기</button>
       <button class="sec" id="s-eye" data-i18n="bShow">보기</button>
@@ -392,19 +392,25 @@ section[hidden]{display:none}
   </div>
   <div class="setrow">
     <h4 data-i18n="sLinkH">직원용 설치 링크</h4>
-    <p>키 연결이 끝난 뒤 이 버튼을 누르면 키가 담긴 링크가 만들어집니다. 직원이 그 링크를 한 번만 열면 자동 인식이 켜진 상태로 바로 사용할 수 있습니다.<br><br>
+    <p data-i18n-html="pLink">키 연결이 끝난 뒤 이 버튼을 누르면 키가 담긴 링크가 만들어집니다. 직원이 그 링크를 한 번만 열면 자동 인식이 켜진 상태로 바로 사용할 수 있습니다.<br><br>
     <b>이 링크를 아는 사람은 누구나 키를 쓸 수 있습니다.</b> 함께 일하는 사람에게만 보내고, 전시가 끝나면 키를 삭제하세요.</p>
     <button id="s-link" data-i18n="bMakeLink">설치 링크 만들어 복사</button>
     <div class="ai" id="linkStatus"></div>
   </div>
   <div class="setrow">
     <h4 data-i18n="sScanH">스캔 보정</h4>
-    <p>사진을 찍거나 불러오면 그림자와 조명 얼룩을 걷어내고 배경을 하얗게 펴서 스캔한 문서처럼 만듭니다. 글자가 또렷해지고 용량도 줄어듭니다. 촬영 화면에서 언제든 원본과 번갈아 볼 수 있습니다.</p>
-    <button id="s-scan">불러오는 중</button>
+    <p data-i18n="pScan">사진을 찍거나 불러오면 그림자와 조명 얼룩을 걷어내고 배경을 하얗게 펴서 스캔한 문서처럼 만듭니다. 글자가 또렷해지고 용량도 줄어듭니다. 촬영 화면에서 언제든 원본과 번갈아 볼 수 있습니다.</p>
+    <button id="s-scan" data-i18n="loading">불러오는 중</button>
+  </div>
+
+  <div class="setrow">
+    <h4 data-i18n="sCropH">테두리 자동 잘라내기</h4>
+    <p data-i18n="sCropP">명함·방문증만 남기고 바깥 여백을 잘라냅니다. 잘못 잘리면 끄고 쓰세요. 원본은 언제든 다시 볼 수 있습니다.</p>
+    <button id="s-crop" data-i18n="loading">불러오는 중</button>
   </div>
   <div class="setrow">
     <h4 data-i18n="sSyncH">실시간 공유 (구글 시트)</h4>
-    <p>연결하면 접수 기록이 자동으로 구글 시트에 올라가고, 다른 직원의 기록도 자동으로 내려받아 명부에 함께 표시됩니다. 인터넷이 끊겨도 폰에는 정상 저장되며, 연결되는 순간 밀린 기록이 알아서 올라갑니다.<br><br>
+    <p data-i18n-html="pSync">연결하면 접수 기록이 자동으로 구글 시트에 올라가고, 다른 직원의 기록도 자동으로 내려받아 명부에 함께 표시됩니다. 인터넷이 끊겨도 폰에는 정상 저장되며, 연결되는 순간 밀린 기록이 알아서 올라갑니다.<br><br>
     <b>사진은 올라가지 않습니다.</b> 용량이 커서 폰에만 보관됩니다.</p>
     <input id="s-sync" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://script.google.com/.../exec">
     <div class="keyrow">
@@ -416,19 +422,19 @@ section[hidden]{display:none}
   </div>
   <div class="setrow">
     <h4 data-i18n="sImpH">다른 담당자 기록 합치기</h4>
-    <p>직원이 내보낸 CSV 파일을 불러오면 이 폰의 명부에 함께 표시되고, 담당자별로 나눠 볼 수 있습니다. 사진은 따로 관리되므로 글자 정보만 합쳐집니다. 같은 기록을 두 번 불러와도 중복되지 않습니다.</p>
+    <p data-i18n="pMerge">직원이 내보낸 CSV 파일을 불러오면 이 폰의 명부에 함께 표시되고, 담당자별로 나눠 볼 수 있습니다. 사진은 따로 관리되므로 글자 정보만 합쳐집니다. 같은 기록을 두 번 불러와도 중복되지 않습니다.</p>
     <input type="file" id="impFile" accept=".csv,text/csv" hidden>
     <button id="s-import" data-i18n="bImport">CSV 불러와 합치기</button>
     <div class="ai" id="impStatus"></div>
   </div>
   <div class="setrow">
     <h4 data-i18n="sUsageH">저장 상태</h4>
-    <p id="usage">계산 중…</p>
-    <button class="sec" id="s-diag" style="width:100%;margin-bottom:9px">저장소 진단</button>
+    <p id="usage" data-i18n="pCalc">계산 중…</p>
+    <button class="sec" id="s-diag" data-i18n="bDiag" style="width:100%;margin-bottom:9px">저장소 진단</button>
     <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
-  <div class="ver">Ver 1.0.0</div>
+  <div class="ver">Ver 1.2.1</div>
 </section>
 </main>
 
@@ -499,7 +505,16 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  tSyncOk:'동기화 완료',tCopied:'복사했습니다',tSetStaff:'먼저 담당자 이름을 설정하세요',
  cDelPhoto:'이 사진을 지웁니다. 입력한 회사명과 메모는 그대로 남습니다.',
  cDelRec:'이 기록을 삭제합니다. 사진도 함께 지워집니다.',
+ pAi:'켜면 촬영 즉시 회사명과 이름이 자동으로 채워집니다. 키는 이 휴대폰에만 저장되며 어디로도 전송되지 않습니다.<br><br><b>켜는 방법</b> — 컴퓨터에서 <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> 접속 → 왼쪽 API keys → Create Key → 생성된 sk-ant- 로 시작하는 문자열을 복사해 아래에 붙여넣고 <b>키 연결 확인</b>을 누르세요. 모델명은 비워 두면 알아서 맞는 것을 찾습니다.',
+ pLink:'키 연결이 끝난 뒤 이 버튼을 누르면 키가 담긴 링크가 만들어집니다. 직원이 그 링크를 한 번만 열면 자동 인식이 켜진 상태로 바로 사용할 수 있습니다.<br><br><b>이 링크를 아는 사람은 누구나 키를 쓸 수 있습니다.</b> 함께 일하는 사람에게만 보내고, 전시가 끝나면 키를 삭제하세요.',
+ pScan:'사진을 찍거나 불러오면 그림자와 조명 얼룩을 걷어내고 배경을 하얗게 펴서 스캔한 문서처럼 만듭니다. 글자가 또렷해지고 용량도 줄어듭니다. 촬영 화면에서 언제든 원본과 번갈아 볼 수 있습니다.',
+ pSync:'연결하면 접수 기록이 자동으로 구글 시트에 올라가고, 다른 직원의 기록도 자동으로 내려받아 명부에 함께 표시됩니다. 인터넷이 끊겨도 폰에는 정상 저장되며, 연결되는 순간 밀린 기록이 알아서 올라갑니다.<br><br><b>사진은 올라가지 않습니다.</b> 용량이 커서 폰에만 보관됩니다.',
+ pMerge:'직원이 내보낸 CSV 파일을 불러오면 이 폰의 명부에 함께 표시되고, 담당자별로 나눠 볼 수 있습니다. 사진은 따로 관리되므로 글자 정보만 합쳐집니다. 같은 기록을 두 번 불러와도 중복되지 않습니다.',
+ pCalc:'계산 중…',bDiag:'저장소 진단',loading:'불러오는 중',phKey:'sk-ant-... (선택 사항)',
  scanOnBtn:'자동 보정 켜짐 — 누르면 끕니다',scanOffBtn:'자동 보정 꺼짐 — 누르면 켭니다',
+ cropOnBtn:'테두리 자동 잘라내기 켜짐 — 누르면 끕니다',cropOffBtn:'테두리 자동 잘라내기 꺼짐 — 누르면 켭니다',
+ sCropH:'테두리 자동 잘라내기',
+ sCropP:'명함·방문증만 남기고 바깥 여백을 잘라냅니다. 잘못 잘리면 끄고 쓰세요. 원본은 언제든 다시 볼 수 있습니다.',
  syncOn:'공유됨',syncWait:'대기',syncOff:'오프라인',syncing:'전송 중'},
 
 en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENTRIES',
@@ -537,7 +552,16 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  tSyncOk:'Sync complete',tCopied:'Copied',tSetStaff:'Please set your staff name first',
  cDelPhoto:'Delete this photo? The company name and notes you typed will stay.',
  cDelRec:'Delete this record? The photo will be removed too.',
+ pAi:'When on, the company and name are filled in as soon as you take a photo. The key is stored on this phone only and is never sent anywhere else.<br><br><b>How to turn it on</b> — On a computer, go to <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> → API keys on the left → Create Key → copy the string starting with sk-ant- and paste it below, then tap <b>Check key connection</b>. Leave the model name blank to pick one automatically.',
+ pLink:'Once the key is connected, this button creates a link containing the key. A staff member only needs to open that link once and auto recognition will already be on.<br><br><b>Anyone who has this link can use your key.</b> Send it only to people you work with, and delete the key when the show ends.',
+ pScan:'Photos are cleaned up automatically: shadows and uneven lighting are removed and the background is flattened to white, like a scanned document. Text becomes clearer and the file gets smaller. You can switch back to the original at any time on the capture screen.',
+ pSync:'When connected, entries are uploaded to your Google Sheet automatically, and entries from other staff are downloaded into your list. Everything still saves on the phone when the internet drops, and pending entries upload as soon as you are back online.<br><br><b>Photos are not uploaded.</b> They are large, so they stay on the phone.',
+ pMerge:'Load a CSV exported by another staff member and it appears in this phone\'s list, where you can view entries by staff. Photos are handled separately, so only the text is merged. Loading the same file twice will not create duplicates.',
+ pCalc:'Calculating…',bDiag:'Storage check',loading:'Loading',phKey:'sk-ant-... (optional)',
  scanOnBtn:'Auto cleanup ON — tap to turn off',scanOffBtn:'Auto cleanup OFF — tap to turn on',
+ cropOnBtn:'Auto edge crop ON — tap to turn off',cropOffBtn:'Auto edge crop OFF — tap to turn on',
+ sCropH:'Auto edge crop',
+ sCropP:'Trims the background around the card or badge. Turn it off if it crops wrongly. The original is always available.',
  syncOn:'Synced',syncWait:'Queued',syncOff:'Offline',syncing:'Sending'},
 
 zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置',scans:'登记',
@@ -575,7 +599,16 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  tSyncOk:'同步完成',tCopied:'已复制',tSetStaff:'请先设置负责人姓名',
  cDelPhoto:'删除这张照片？已输入的公司名和备注会保留。',
  cDelRec:'删除这条记录？照片也会一并删除。',
+ pAi:'开启后，拍照即刻自动填入公司名和姓名。密钥仅保存在本手机，不会发送到任何地方。<br><br><b>开启方法</b> — 在电脑上访问 <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a> → 左侧 API keys → Create Key → 复制以 sk-ant- 开头的字符串粘贴到下方，然后点击<b>密钥连接确认</b>。模型名留空会自动选择。',
+ pLink:'密钥连接完成后，点击此按钮会生成含密钥的链接。员工只需打开一次，自动识别即为开启状态。<br><br><b>知道此链接的任何人都能使用您的密钥。</b>请只发给共事的同事，展会结束后请删除密钥。',
+ pScan:'拍照或导入后自动去除阴影和光斑，将背景拉白，效果如同扫描文件。文字更清晰，文件也更小。在拍摄画面可随时切换查看原图。',
+ pSync:'连接后，登记记录会自动上传到 Google 表格，其他员工的记录也会自动下载并显示在名单中。断网时仍可正常保存在手机上，恢复连接后会自动补传。<br><br><b>照片不会上传。</b>因体积较大，仅保存在手机中。',
+ pMerge:'导入其他员工导出的 CSV 文件后，记录会显示在本手机的名单中，并可按负责人分类查看。照片单独管理，仅合并文字信息。重复导入同一文件也不会产生重复记录。',
+ pCalc:'计算中…',bDiag:'存储诊断',loading:'载入中',phKey:'sk-ant-...（可选）',
  scanOnBtn:'自动优化已开启 — 点击关闭',scanOffBtn:'自动优化已关闭 — 点击开启',
+ cropOnBtn:'自动裁边已开启 — 点击关闭',cropOffBtn:'自动裁边已关闭 — 点击开启',
+ sCropH:'自动裁边',
+ sCropP:'自动裁掉名片或参观证周围的背景。裁切不准时请关闭。原图随时可以查看。',
  syncOn:'已共享',syncWait:'待发送',syncOff:'离线',syncing:'发送中'}
 };
 const ITEM_T={
@@ -593,6 +626,8 @@ function applyLang(){
   document.documentElement.lang = cfg.lang==='zh'?'zh-CN':(cfg.lang||'ko');
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent=t(el.dataset.i18n) });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder=t(el.dataset.i18nPh) });
+  /* 굵은 글씨·링크가 들어간 설명 문단은 통째로 갈아끼웁니다 */
+  document.querySelectorAll('[data-i18n-html]').forEach(el=>{ el.innerHTML=t(el.dataset.i18nHtml) });
   const sn=$('staffName'); if(sn&&!cfg.staff)sn.textContent=t('unset');
   [...document.querySelectorAll('#langBtns button')].forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===cfg.lang)));
   if(typeof applyFont==='function')applyFont();
@@ -610,8 +645,12 @@ function applyLang(){
 const ITEMS=['친환경 특수지','습식PU','VIVI (PVC) 지레자','샘플 요청','견적 요청','해외 바이어','동종업계'];
 const BOOKS=['MUSE 1','MUSE 2','MUSE 3','PATRIX','VIVI','VIVI (VE)','FIGARO 핸드북','샘플북 속지'];
 const SPEC_BOOK='샘플북 속지';
-const BOOK_T={'샘플북 속지':{en:'Sample book inserts',zh:'样本册内页'},'FIGARO 핸드북':{en:'FIGARO handbook',zh:'FIGARO 手册'}};
+const BOOK_T={'MUSE 1':{en:'MUSE 1',zh:'MUSE 1'},'MUSE 2':{en:'MUSE 2',zh:'MUSE 2'},'MUSE 3':{en:'MUSE 3',zh:'MUSE 3'},
+ 'PATRIX':{en:'PATRIX',zh:'PATRIX'},'VIVI':{en:'VIVI',zh:'VIVI'},'VIVI (VE)':{en:'VIVI (VE)',zh:'VIVI (VE)'},
+ 'FIGARO 핸드북':{en:'FIGARO handbook',zh:'FIGARO 手册'},'샘플북 속지':{en:'Sample book inserts',zh:'样本册内页'}};
 function bookLabel(id){ const m=BOOK_T[id]; return (m&&cfg.lang!=='ko'&&m[cfg.lang])?m[cfg.lang]:id; }
+const TRD={"확인 중…": {"en": "Checking…", "zh": "检查中…"}, "IndexedDB 사용 가능: ": {"en": "IndexedDB available: ", "zh": "IndexedDB 可用: "}, "예": {"en": "Yes", "zh": "是"}, "아니오": {"en": "No", "zh": "否"}, "저장소 열기: ": {"en": "Open database: ", "zh": "打开数据库: "}, "성공": {"en": "OK", "zh": "成功"}, "실패": {"en": "Failed", "zh": "失败"}, "읽기 실패": {"en": "Read failed", "zh": "读取失败"}, "저장소에 있는 기록: ": {"en": "Records in database: ", "zh": "数据库中的记录: "}, "건": {"en": "", "zh": "条"}, "화면에 있는 기록: ": {"en": "Records on screen: ", "zh": "屏幕上的记录: "}, "예비 저장본: ": {"en": "Backup copy: ", "zh": "备用存档: "}, "db 없음": {"en": "no db", "zh": "无数据库"}, "put 실패": {"en": "put failed", "zh": "写入失败"}, "쓰기 시험: 성공": {"en": "Write test: OK", "zh": "写入测试: 成功"}, "쓰기 시험: 실패 (": {"en": "Write test: failed (", "zh": "写入测试: 失败 ("}, "여유 공간: 약 ": {"en": "Free space: approx. ", "zh": "可用空间: 约 "}, "마지막 오류: ": {"en": "Last error: ", "zh": "最后错误: "}, "압축 실패": {"en": "Resize failed", "zh": "压缩失败"}, "이미지를 읽지 못했습니다": {"en": "Could not read the image", "zh": "无法读取图片"}, "파일을 읽지 못했습니다": {"en": "Could not read the file", "zh": "无法读取文件"}, "자동으로 ": {"en": "Filled ", "zh": "已自动填写 "}, "개 항목을 채웠습니다 — 틀린 곳은 고쳐 주세요": {"en": " field(s) automatically — please correct any errors", "zh": " 个项目 — 请修正有误之处"}, "글자를 읽지 못했습니다. 직접 입력하세요": {"en": "Could not read the text. Please type it in.", "zh": "无法识别文字，请手动输入"}, "자동 인식 실패 — 직접 입력하세요 (": {"en": "Auto recognition failed — please type it in (", "zh": "自动识别失败 — 请手动输入 ("}, "사진 ": {"en": "Photo ", "zh": "照片 "}, "불러오는 중 ": {"en": "Loading ", "zh": "载入中 "}, "방문증 글자를 읽는 중…": {"en": "Reading the badge…", "zh": "正在识别参观证…"}, "저장 ": {"en": "Saved ", "zh": "已保存 "}, " · 실패 ": {"en": " · failed ", "zh": " · 失败 "}, "완료": {"en": "Done", "zh": "完成"}, "건을 명부에 넣었습니다.": {"en": " record(s) added to the list.", "zh": " 条记录已加入名单。"}, " 자동 인식 ": {"en": " auto-recognised ", "zh": " 自动识别 "}, "건.": {"en": " record(s).", "zh": " 条。"}, " 명부에서 회사명과 이름을 입력하세요.": {"en": " Enter company and name in the list.", "zh": " 请在名单中填写公司名和姓名。"}, "내용을 입력하거나 사진을 넣어 주세요": {"en": "Please enter details or add a photo", "zh": "请输入内容或添加照片"}, " 번": {"en": " ", "zh": "号"}, "보정 중…": {"en": "Cleaning up…", "zh": "优化中…"}, "인터넷 연결 없음": {"en": "No internet connection", "zh": "无网络连接"}, "서버 응답 ": {"en": "Server response ", "zh": "服务器响应 "}, "서버 오류": {"en": "Server error", "zh": "服务器错误"}, "동기화 실패: ": {"en": "Sync failed: ", "zh": "同步失败: "}, "입력칸을 길게 눌러 붙여넣기 하세요": {"en": "Press and hold the field to paste", "zh": "长按输入框粘贴"}, "주소가 script.google.com 으로 시작하고 /exec 로 끝나야 합니다": {"en": "The URL must start with script.google.com and end with /exec", "zh": "网址须以 script.google.com 开头、/exec 结尾"}, "연결 확인 중…": {"en": "Checking connection…", "zh": "检查连接中…"}, "연결 성공 — 시트에 ": {"en": "Connected — the sheet has ", "zh": "连接成功 — 表格中有 "}, "건이 있습니다": {"en": " record(s)", "zh": " 条记录"}, "실패: ": {"en": "Failed: ", "zh": "失败: "}, " (배포 시 액세스 권한을 모든 사용자로 했는지 확인하세요)": {"en": " (check that deployment access is set to Anyone)", "zh": "（请确认部署访问权限设为所有人）"}, "먼저 주소를 연결하세요": {"en": "Connect the URL first", "zh": "请先连接网址"}, "동기화 완료": {"en": "Sync complete", "zh": "同步完成"}, "압축 기능을 불러오지 못했습니다": {"en": "Could not load the zip library", "zh": "无法载入压缩功能"}, "압축 기능을 불러오지 못했습니다 (인터넷 확인)": {"en": "Could not load the zip library (check internet)", "zh": "无法载入压缩功能（请检查网络）"}, "파일을 읽는 중…": {"en": "Reading the file…", "zh": "正在读取文件…"}, "내용이 없습니다": {"en": "The file is empty", "zh": "没有内容"}, "이 앱에서 내보낸 CSV가 아닙니다": {"en": "This CSV was not exported from this app", "zh": "这不是本应用导出的 CSV"}, "건을 합쳤습니다.": {"en": " record(s) merged.", "zh": " 条记录已合并。"}, " 이미 있는 ": {"en": " Skipped ", "zh": " 已跳过 "}, "건은 건너뛰었습니다.": {"en": " duplicate(s).", "zh": " 条重复记录。"}, "복사된 내용이 없습니다": {"en": "Nothing to paste", "zh": "剪贴板为空"}, "붙여넣었습니다. 키 연결 확인을 누르세요": {"en": "Pasted. Tap Check key connection.", "zh": "已粘贴，请点击密钥连接确认"}, "붙여넣기 권한이 없습니다. 입력칸을 길게 눌러 붙여넣기 하세요": {"en": "No paste permission. Press and hold the field to paste.", "zh": "无粘贴权限，请长按输入框粘贴"}, "먼저 API 키를 붙여넣으세요": {"en": "Paste the API key first", "zh": "请先粘贴 API 密钥"}, "키 형식이 다릅니다. sk-ant- 으로 시작해야 합니다": {"en": "Wrong key format. It must start with sk-ant-", "zh": "密钥格式有误，须以 sk-ant- 开头"}, " 확인 중…": {"en": " checking…", "zh": " 检查中…"}, "인터넷 연결을 확인하세요": {"en": "Check your internet connection", "zh": "请检查网络连接"}, "연결 성공 — 자동 인식이 켜졌습니다 (": {"en": "Connected — auto recognition is on (", "zh": "连接成功 — 自动识别已开启 ("}, "키가 올바르지 않거나 권한이 없습니다": {"en": "The key is invalid or lacks permission", "zh": "密钥无效或无权限"}, "요청이 많습니다. 잠시 후 다시 시도하세요": {"en": "Too many requests. Try again shortly.", "zh": "请求过多，请稍后重试"}, "계정 잔액이 부족합니다": {"en": "Insufficient account balance", "zh": "账户余额不足"}, " · 사용 가능 약 ": {"en": " · approx. free ", "zh": " · 可用约 "}, "기록 ": {"en": "Records ", "zh": "记录 "}, "건 · 사진 ": {"en": " · photos ", "zh": " 条 · 照片 "}, "정말 삭제할까요?": {"en": "Delete for real?", "zh": "确定要删除吗？"}, "전체 삭제했습니다": {"en": "Everything deleted", "zh": "已全部删除"}, "무명": {"en": "Unnamed", "zh": "无名"}, "사진을 묶는 중…": {"en": "Zipping photos…", "zh": "正在打包照片…"}, "먼저 키를 넣고 연결 확인을 하세요": {"en": "Enter the key and check the connection first", "zh": "请先输入密钥并确认连接"}, "링크를 복사했습니다. 직원에게 보내세요": {"en": "Link copied. Send it to your staff.", "zh": "已复制链接，请发送给员工"}, " (구글 시트 연결도 함께 전달됩니다)": {"en": " (the Google Sheet connection is included)", "zh": "（同时包含 Google 表格连接）"}, "사파리": {"en": "Safari", "zh": "Safari"}, "크롬": {"en": "Chrome", "zh": "Chrome"}, "복사했습니다": {"en": "Copied", "zh": "已复制"}, "주소를 길게 눌러 복사하세요": {"en": "Press and hold the link to copy", "zh": "长按链接复制"}, "설정을 받았습니다 — 자동 인식이 켜졌습니다": {"en": "Settings received — auto recognition is on", "zh": "已接收设置 — 自动识别已开启"}, "예비 저장본에서 ": {"en": "Restored ", "zh": "已从备用存档恢复 "}, "건을 복구했습니다": {"en": " record(s) from the backup copy", "zh": " 条记录"}};
+function TR(k){ const m=TRD[k]; return (m&&cfg.lang!=='ko'&&m[cfg.lang]!==undefined)?m[cfg.lang]:k; }
 const $=i=>document.getElementById(i);
 let rows=[], draft=null, cfg={staff:'',key:'',model:'claude-sonnet-5'};
 
@@ -676,30 +715,30 @@ function mirrorLoad(){
 $('s-diag').addEventListener('click',async()=>{
   const o=$('diagOut'); o.className='ai'; o.innerHTML='<span class="spin"></span>확인 중…';
   const L=[];
-  L.push('IndexedDB 사용 가능: '+(('indexedDB' in window)?'예':'아니오'));
+  L.push(TR('IndexedDB 사용 가능: ')+(('indexedDB' in window)?TR('예'):TR('아니오')));
   const ok=await openDB();
-  L.push('저장소 열기: '+(ok?'성공':'실패'));
+  L.push(TR('저장소 열기: ')+(ok?TR('성공'):TR('실패')));
   let cnt='-';
-  try{ cnt=(await dbAll()).length }catch(e){ cnt='읽기 실패' }
-  L.push('저장소에 있는 기록: '+cnt+'건');
-  L.push('화면에 있는 기록: '+rows.length+'건');
-  L.push('예비 저장본: '+mirrorLoad().length+'건');
+  try{ cnt=(await dbAll()).length }catch(e){ cnt=TR('읽기 실패') }
+  L.push(TR('저장소에 있는 기록: ')+cnt+TR('건'));
+  L.push(TR('화면에 있는 기록: ')+rows.length+TR('건'));
+  L.push(TR('예비 저장본: ')+mirrorLoad().length+TR('건'));
   // 쓰기 시험
   try{
     const testId=-999999;
     await new Promise((res,rej)=>{
-      if(!db)return rej(new Error('db 없음'));
+      if(!db)return rej(new Error(TR('db 없음')));
       const q=tx('readwrite').put({id:testId,test:1});
-      q.onsuccess=()=>res(); q.onerror=()=>rej(q.error||new Error('put 실패'));
+      q.onsuccess=()=>res(); q.onerror=()=>rej(q.error||new Error(TR('put 실패')));
     });
     await dbDel(testId);
-    L.push('쓰기 시험: 성공');
-  }catch(e){ L.push('쓰기 시험: 실패 ('+(e.message||e)+')') }
+    L.push(TR('쓰기 시험: 성공'));
+  }catch(e){ L.push(TR('쓰기 시험: 실패 (')+(e.message||e)+')') }
   try{
     const est=await navigator.storage.estimate();
-    L.push('여유 공간: 약 '+Math.round((est.quota-est.usage)/1048576)+'MB');
+    L.push(TR('여유 공간: 약 ')+Math.round((est.quota-est.usage)/1048576)+'MB');
   }catch(e){}
-  if(lastDbError)L.push('마지막 오류: '+lastDbError);
+  if(lastDbError)L.push(TR('마지막 오류: ')+lastDbError);
   o.className='ai'; o.innerHTML=L.map(x=>esc(x)).join('<br>');
 });
 
@@ -772,6 +811,56 @@ function scanify(blob){
   });
 }
 
+/* ── 테두리 자동 잘라내기 ──
+   명함·방문증 바깥의 배경을 잘라냅니다. 글자·테두리가 몰려 있는 구간만 남깁니다.
+   기울어진 사진을 반듯하게 펴 주지는 않습니다.
+   잘못 자르는 사고를 막으려고 안전장치를 여러 겹 두었습니다. */
+function autoCrop(blob){
+  return new Promise(res=>{
+    const im=new Image();
+    im.onload=()=>{
+      try{
+        const W=im.width,H=im.height,S=240,k=Math.min(1,S/Math.max(W,H));
+        const w=Math.max(40,Math.round(W*k)),h=Math.max(40,Math.round(H*k));
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        const cx=c.getContext('2d',{willReadFrequently:true});
+        cx.drawImage(im,0,0,w,h);
+        const px=cx.getImageData(0,0,w,h).data, g=new Float32Array(w*h);
+        for(let i=0,j=0;i<px.length;i+=4,j++) g[j]=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+        const col=new Float32Array(w),row=new Float32Array(h);
+        for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+          const j=y*w+x,e=Math.abs(g[j]-g[j+1])+Math.abs(g[j]-g[j+w]);
+          col[x]+=e; row[y]+=e;
+        }
+        const sm=a=>{const o=new Float32Array(a.length);
+          for(let i=0;i<a.length;i++){let v=0,n=0;
+            for(let d=-2;d<=2;d++){const q=i+d;if(q>=0&&q<a.length){v+=a[q];n++}}
+            o[i]=v/n;} return o;};
+        const span=a=>{let mx=0;for(const v of a)if(v>mx)mx=v;
+          if(mx<=0)return null;
+          const th=mx*0.16; let s0=0,e0=a.length-1;
+          while(s0<a.length&&a[s0]<th)s0++;
+          while(e0>s0&&a[e0]<th)e0--;
+          return (e0-s0)<8?null:[s0,e0];};
+        const sx=span(sm(col)), sy=span(sm(row));
+        if(!sx||!sy){res(blob);return}
+        const px2=Math.round(w*0.03),py2=Math.round(h*0.03);
+        const x0=Math.max(0,sx[0]-px2),x1=Math.min(w-1,sx[1]+px2);
+        const y0=Math.max(0,sy[0]-py2),y1=Math.min(h-1,sy[1]+py2);
+        const cw=(x1-x0+1)/w, ch=(y1-y0+1)/h;
+        /* 45% 넘게 잘리거나, 자를 게 거의 없으면 원본 그대로 */
+        if(cw<0.55||ch<0.55||(cw>0.95&&ch>0.95)){res(blob);return}
+        const RW=Math.round(cw*W),RH=Math.round(ch*H);
+        const o=document.createElement('canvas');o.width=RW;o.height=RH;
+        o.getContext('2d').drawImage(im,Math.round(x0/w*W),Math.round(y0/h*H),RW,RH,0,0,RW,RH);
+        o.toBlob(b=>res(b||blob),'image/jpeg',0.72);
+      }catch(e){res(blob)}
+    };
+    im.onerror=()=>res(blob);
+    im.src=URL.createObjectURL(blob);
+  });
+}
+
 /* 사진 압축 */
 function shrink(file){
   return new Promise((res,rej)=>{
@@ -783,12 +872,12 @@ function shrink(file){
         const c=document.createElement('canvas');
         c.width=Math.round(im.width*s); c.height=Math.round(im.height*s);
         c.getContext('2d').drawImage(im,0,0,c.width,c.height);
-        c.toBlob(b=>b?res(b):rej('압축 실패'),'image/jpeg',0.62);
+        c.toBlob(b=>b?res(b):rej(TR('압축 실패')),'image/jpeg',0.62);
       };
-      im.onerror=()=>rej('이미지를 읽지 못했습니다');
+      im.onerror=()=>rej(TR('이미지를 읽지 못했습니다'));
       im.src=fr.result;
     };
-    fr.onerror=()=>rej('파일을 읽지 못했습니다');
+    fr.onerror=()=>rej(TR('파일을 읽지 못했습니다'));
     fr.readAsDataURL(file);
   });
 }
@@ -818,9 +907,9 @@ async function readBadge(blob){
     const map={company:'f-company',name:'f-name',title:'f-title',phone:'f-phone',email:'f-email',address:'f-addr'};
     let got=0;
     Object.keys(map).forEach(k=>{ if(j[k]){$(map[k]).value=String(j[k]).trim();got++} });
-    s.className='ai on';s.textContent=got?('자동으로 '+got+'개 항목을 채웠습니다 — 틀린 곳은 고쳐 주세요'):'글자를 읽지 못했습니다. 직접 입력하세요';
+    s.className='ai on';s.textContent=got?(TR('자동으로 ')+got+TR('개 항목을 채웠습니다 — 틀린 곳은 고쳐 주세요')):TR('글자를 읽지 못했습니다. 직접 입력하세요');
   }catch(err){
-    s.className='ai err';s.textContent='자동 인식 실패 — 직접 입력하세요 ('+String(err.message||err).slice(0,60)+')';
+    s.className='ai err';s.textContent=TR('자동 인식 실패 — 직접 입력하세요 (')+String(err.message||err).slice(0,60)+')';
   }
 }
 
@@ -829,7 +918,8 @@ $('shootBtn').addEventListener('click',()=>$('cam').click());
 $('pickBtn').addEventListener('click',()=>$('gal').click());
 
 async function startDraft(file){
-  const orig=await shrink(file);
+  let orig=await shrink(file);
+  if(cfg.crop!==false) orig=await autoCrop(orig);
   const scanned=cfg.scan?await scanify(orig):null;
   draft={orig,scanned,blob:(scanned||orig),scanOn:!!scanned,grade:'',items:[],books:[],editId:null};
   $('draft').hidden=false; showPhoto();
@@ -866,7 +956,7 @@ $('gal').addEventListener('change',async e=>{
   const files=[...(e.target.files||[])]; e.target.value='';
   if(!files.length)return;
   if(files.length===1){ try{ await startDraft(files[0]) }catch(err){toast(String(err))} return; }
-  if(!confirm('사진 '+files.length+'장을 한 번에 명부에 넣습니다.\n회사명과 이름은 나중에 명부에서 수정할 수 있습니다.\n\n계속할까요?'))return;
+  if(!confirm(TR('사진 ')+files.length+'장을 한 번에 명부에 넣습니다.\n회사명과 이름은 나중에 명부에서 수정할 수 있습니다.\n\n계속할까요?'))return;
   await bulkImport(files);
 });
 
@@ -877,14 +967,15 @@ async function bulkImport(files){
   $('shootBtn').disabled=true; $('pickBtn').disabled=true;
   let done=0, failed=0, read=0;
   for(const f of files){
-    ttl.textContent='불러오는 중 '+(done+1)+' / '+files.length;
+    ttl.textContent=TR('불러오는 중 ')+(done+1)+' / '+files.length;
     try{
       const raw=await shrink(f);
-      const blob=cfg.scan?await scanify(raw):raw;
+      const raw2=(cfg.crop!==false)?await autoCrop(raw):raw;
+      const blob=cfg.scan?await scanify(raw2):raw2;
       const rec={id:Date.now()+done,at:nowStr(),staff:cfg.staff||'',
         company:'',name:'',title:'',phone:'',email:'',addr:'',items:[],books:[],grade:'',memo:'',spec:'',photo:blob,uid:uid(),updated:Date.now(),dirty:true};
       if(cfg.key){
-        msg.textContent='방문증 글자를 읽는 중…';
+        msg.textContent=TR('방문증 글자를 읽는 중…');
         const got=await readBadgeQuiet(raw);
         if(got){rec.company=got.company||'';rec.name=got.name||'';rec.title=got.title||'';
           rec.phone=got.phone||'';rec.email=got.email||'';rec.addr=got.address||'';read++}
@@ -893,11 +984,11 @@ async function bulkImport(files){
     }catch(err){ failed++ }
     done++;
     fill.style.width=Math.round(done/files.length*100)+'%';
-    msg.textContent='저장 '+(done-failed)+'건'+(failed?' · 실패 '+failed+'건':'');
+    msg.textContent=TR('저장 ')+(done-failed)+TR('건')+(failed?TR(' · 실패 ')+failed+TR('건'):'');
     render();
   }
-  ttl.textContent='완료';
-  msg.textContent=(done-failed)+'건을 명부에 넣었습니다.'+(cfg.key?' 자동 인식 '+read+'건.':' 명부에서 회사명과 이름을 입력하세요.');
+  ttl.textContent=TR('완료');
+  msg.textContent=(done-failed)+TR('건을 명부에 넣었습니다.')+(cfg.key?TR(' 자동 인식 ')+read+TR('건.'):TR(' 명부에서 회사명과 이름을 입력하세요.'));
   $('shootBtn').disabled=false; $('pickBtn').disabled=false;
   usage(); pill(); if(cfg.sync)syncNow(true);
   if(navigator.vibrate)navigator.vibrate([50,80,50]);
@@ -984,12 +1075,12 @@ $('saveBtn').addEventListener('click',async()=>{
     company,name,title,phone,email,addr,spec,items:draft.items,books:draft.books||[],grade:draft.grade,memo,
     photo:draft.blob,uid:uid(),updated:Date.now(),dirty:true};
   if(!rec.company&&!rec.name&&!rec.phone&&!rec.email&&!rec.memo){
-    if(!draft.blob){toast('내용을 입력하거나 사진을 넣어 주세요');return;}
+    if(!draft.blob){toast(TR('내용을 입력하거나 사진을 넣어 주세요'));return;}
     if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
   }
   rows.unshift(rec); filterStaff=''; const okw=await dbPut(rec); mirrorSave();
   if(!okw)toast(t('tNoStore'));
-  stamp(pad(rows.length)+' 번');
+  stamp(pad(rows.length)+TR(' 번'));
   pill(); if(cfg.sync)syncNow(true);
   draft=null;$('draft').hidden=true;render();usage();
 });
@@ -1000,7 +1091,7 @@ function showPhoto(){
   $('preview').hidden=!has;
   $('photoActs').hidden=!has;
   $('noPhoto').hidden=has;
-  if(has)$('preview').src=URL.createObjectURL(draft.blob);
+  if(has){ const _p=$('preview'); if(_p.dataset.u){try{URL.revokeObjectURL(_p.dataset.u)}catch(e){}} const u=URL.createObjectURL(draft.blob); _p.dataset.u=u; _p.src=u; }
   const tb=$('toggleScan');
   if(tb){ tb.hidden=!(draft&&draft.orig); tb.textContent=t((draft&&draft.scanOn)?'scanOrig':'scanFix'); }
 }
@@ -1014,7 +1105,7 @@ $('toggleScan').addEventListener('click',async()=>{
   const btn=$('toggleScan');
   if(draft.scanOn){ draft.blob=draft.orig; draft.scanOn=false; }
   else{
-    if(!draft.scanned){ btn.textContent='보정 중…'; draft.scanned=await scanify(draft.orig); }
+    if(!draft.scanned){ btn.textContent=TR('보정 중…'); draft.scanned=await scanify(draft.orig); }
     draft.blob=draft.scanned; draft.scanOn=true;
   }
   showPhoto();
@@ -1025,6 +1116,7 @@ async function replacePhoto(f){
   if(!f||!draft)return;
   try{
     draft.orig=await shrink(f);
+    if(cfg.crop!==false) draft.orig=await autoCrop(draft.orig);
     draft.scanned=cfg.scan?await scanify(draft.orig):null;
     draft.scanOn=!!draft.scanned;
     draft.blob=draft.scanned||draft.orig;
@@ -1067,16 +1159,16 @@ function strip(r){
 }
 async function syncNow(quiet){
   if(!cfg.sync||syncing)return {ok:false};
-  if(!navigator.onLine){pill();return {ok:false,msg:'인터넷 연결 없음'}}
+  if(!navigator.onLine){pill();return {ok:false,msg:TR('인터넷 연결 없음')}}
   syncing=true; pill();
   try{
     const push=rows.filter(r=>r.dirty&&!r.imported).map(strip);
     const r=await fetch(cfg.sync,{method:'POST',
       headers:{'content-type':'text/plain;charset=utf-8'},
       body:JSON.stringify({push,since:cfg.lastPull||0})});
-    if(!r.ok)throw new Error('서버 응답 '+r.status);
+    if(!r.ok)throw new Error(TR('서버 응답 ')+r.status);
     const d=await r.json();
-    if(!d.ok)throw new Error(d.error||'서버 오류');
+    if(!d.ok)throw new Error(d.error||TR('서버 오류'));
 
     // 보낸 것은 완료 처리
     for(const rec of rows){ if(rec.dirty&&!rec.imported){rec.dirty=false;await dbPut(rec)} }
@@ -1108,36 +1200,36 @@ async function syncNow(quiet){
     return {ok:true,added};
   }catch(e){
     syncing=false; pill();
-    if(!quiet)toast('동기화 실패: '+String(e.message||e).slice(0,50));
+    if(!quiet)toast(TR('동기화 실패: ')+String(e.message||e).slice(0,50));
     return {ok:false,msg:String(e.message||e)};
   }
 }
 
 $('s-syncPaste').addEventListener('click',async()=>{
   try{ $('s-sync').value=(await navigator.clipboard.readText()||'').trim(); }
-  catch(e){ $('syncStatus').className='ai err'; $('syncStatus').textContent='입력칸을 길게 눌러 붙여넣기 하세요'; }
+  catch(e){ $('syncStatus').className='ai err'; $('syncStatus').textContent=TR('입력칸을 길게 눌러 붙여넣기 하세요'); }
 });
 $('s-syncTest').addEventListener('click',async()=>{
   const st=$('syncStatus'), u=$('s-sync').value.trim();
   if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)){
-    st.className='ai err';st.textContent='주소가 script.google.com 으로 시작하고 /exec 로 끝나야 합니다';return}
+    st.className='ai err';st.textContent=TR('주소가 script.google.com 으로 시작하고 /exec 로 끝나야 합니다');return}
   st.className='ai';st.innerHTML='<span class="spin"></span>연결 확인 중…';
   try{
     const r=await fetch(u,{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},
       body:JSON.stringify({push:[],since:Date.now()})});
     const d=await r.json();
-    if(!d.ok)throw new Error(d.error||'서버 오류');
+    if(!d.ok)throw new Error(d.error||TR('서버 오류'));
     cfg.sync=u; cfgSave();
-    st.className='ai on';st.textContent='연결 성공 — 시트에 '+(d.total||0)+'건이 있습니다';
+    st.className='ai on';st.textContent=TR('연결 성공 — 시트에 ')+(d.total||0)+TR('건이 있습니다');
     pill(); syncNow(true);
-  }catch(e){ st.className='ai err'; st.textContent='실패: '+String(e.message||e).slice(0,90)+' (배포 시 액세스 권한을 모든 사용자로 했는지 확인하세요)'; }
+  }catch(e){ st.className='ai err'; st.textContent=TR('실패: ')+String(e.message||e).slice(0,90)+TR(' (배포 시 액세스 권한을 모든 사용자로 했는지 확인하세요)'); }
 });
 $('s-syncNow').addEventListener('click',async()=>{
-  if(!cfg.sync){toast('먼저 주소를 연결하세요');return}
+  if(!cfg.sync){toast(TR('먼저 주소를 연결하세요'));return}
   const res=await syncNow(false);
   const st=$('syncStatus');
   st.className=res.ok?'ai on':'ai err';
-  st.textContent=res.ok?'동기화 완료':('실패: '+(res.msg||''));
+  st.textContent=res.ok?TR('동기화 완료'):(TR('실패: ')+(res.msg||''));
 });
 
 setInterval(()=>{ if(cfg.sync&&navigator.onLine)syncNow(true) },25000);
@@ -1185,7 +1277,7 @@ function openDetail(r){
   const books=(r.books||[]).map(bookLabel).join(', ');
   const gmap={A:t('gA'),B:t('gB'),C:t('gC')};
   $('dBody').innerHTML=
-    (r.photo?`<img src="${URL.createObjectURL(r.photo)}" alt="badge">`:'')+
+    (r.photo?`<img src="${durl(r.photo)}" alt="badge">`:'')+
     drow(t('lCompany'),r.company)+
     drow(t('lName'),[r.name,r.title].filter(Boolean).join(' '))+
     drow(t('lPhone'),r.phone,r.phone?('tel:'+r.phone.replace(/[^0-9+]/g,'')):'')+
@@ -1254,7 +1346,9 @@ async function cardImage(r,no){
   // 사진
   if(r.photo){
     try{
-      const im=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(r.photo)});
+      const _u=URL.createObjectURL(r.photo);
+      const im=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=_u});
+      try{URL.revokeObjectURL(_u)}catch(e){}
       const maxW=W-PAD*2, maxH=620;
       const sc=Math.min(maxW/im.width,maxH/im.height);
       const w=im.width*sc,h=im.height*sc;
@@ -1347,7 +1441,7 @@ async function exportVCF(list){
   const blob=new Blob([text],{type:'text/vcard;charset=utf-8'});
   const fname = usable.length===1
     ? ((usable[0].company||usable[0].name||'contact').replace(/[\\/:*?"<>|\s]/g,'').slice(0,24)+'.vcf')
-    : ('ACTIVAKOREA_연락처_'+usable.length+'_'+today()+'.vcf');
+    : ('ACTIVAKOREA_Contacts_'+usable.length+'_'+today()+'.vcf');
   // 폰에서는 공유 시트로 넘기면 연락처 앱으로 바로 보낼 수 있습니다
   try{
     const file=new File([blob],fname,{type:'text/vcard'});
@@ -1380,10 +1474,10 @@ $('exCard').addEventListener('click',async()=>{
   if(!list.length){toast(t('tNoRec'));return}
   toast(t('cardMaking'));
   if(list.length===1){ dl(await cardImage(list[0],1),cardName(list[0],1)); toast(t('cardDone')); return; }
-  if(typeof JSZip==='undefined'){toast('압축 기능을 불러오지 못했습니다');return}
+  if(typeof JSZip==='undefined'){toast(TR('압축 기능을 불러오지 못했습니다'));return}
   const zip=new JSZip();
   for(let i=0;i<list.length;i++){ zip.file(cardName(list[i],i+1),await cardImage(list[i],i+1)); }
-  dl(await zip.generateAsync({type:'blob'}),'ACTIVAKOREA_정보카드_'+today()+'.zip');
+  dl(await zip.generateAsync({type:'blob'}),'ACTIVAKOREA_Cards_'+today()+'.zip');
   toast(t('cardDone'));
 });
 
@@ -1459,22 +1553,30 @@ $('impFile').addEventListener('change',async e=>{
   try{
     const text=await f.text();
     const t=parseCSV(text);
-    if(t.length<2)throw new Error('내용이 없습니다');
+    if(t.length<2)throw new Error(TR('내용이 없습니다'));
     const head=t[0].map(x=>x.trim());
-    const col=n=>head.indexOf(n);
-    const need=col('접수시각'); 
-    if(need<0)throw new Error('이 앱에서 내보낸 CSV가 아닙니다');
+    /* 열 이름은 영문이 기본입니다. 예전에 내보낸 한글 머리글 파일도 함께 읽습니다. */
+    const ALIAS={No:['번호'],Timestamp:['접수시각'],Staff:['담당자'],Company:['회사명'],
+      Name:['성함','이름직함'],Title:['직함'],Phone:['전화번호'],Email:['이메일'],
+      Address:['회사주소'],Grade:['등급'],Interests:['관심품목'],SampleBooks:['샘플북요청'],
+      InsertCode:['속지품번'],Memo:['메모'],PhotoFile:['사진파일명']};
+    const col=n=>{
+      let k=head.indexOf(n); if(k>=0)return k;
+      for(const a of (ALIAS[n]||[])){ k=head.indexOf(a); if(k>=0)return k }
+      return -1;
+    };
+    if(col('Timestamp')<0)throw new Error(TR('이 앱에서 내보낸 CSV가 아닙니다'));
     const key=r=>[r.at,r.company,r.name,r.staff].join('|');
     const seen=new Set(rows.map(key));
     let added=0, dup=0;
     for(let i=1;i<t.length;i++){
       const c=t[i], g=n=>{const k=col(n);return k>=0?(c[k]||'').trim():''};
-      const rec={id:Date.now()+i, at:g('접수시각'), staff:g('담당자'),
-        company:g('회사명'), name:g('성함')||g('이름직함'), title:g('직함'),
-        phone:g('전화번호'), email:g('이메일'), addr:g('회사주소'),
-        grade:g('등급'), spec:g('속지품번'), memo:g('메모'),
-        items:g('관심품목')?g('관심품목').split(' / ').filter(Boolean):[],
-        books:g('샘플북요청')?g('샘플북요청').split(' / ').filter(Boolean):[],
+      const rec={id:Date.now()+i, at:g('Timestamp'), staff:g('Staff'),
+        company:g('Company'), name:g('Name'), title:g('Title'),
+        phone:g('Phone'), email:g('Email'), addr:g('Address'),
+        grade:g('Grade'), spec:g('InsertCode'), memo:g('Memo'),
+        items:g('Interests')?g('Interests').split(' / ').filter(Boolean):[],
+        books:g('SampleBooks')?g('SampleBooks').split(' / ').filter(Boolean):[],
         photo:null, imported:true};
       if(!rec.at&&!rec.company&&!rec.name)continue;
       if(seen.has(key(rec))){dup++;continue}
@@ -1483,19 +1585,34 @@ $('impFile').addEventListener('change',async e=>{
     rows.sort((a,b)=>String(b.at).localeCompare(String(a.at)));
     render(); usage();
     st.className='ai on';
-    st.textContent=added+'건을 합쳤습니다.'+(dup?' 이미 있는 '+dup+'건은 건너뛰었습니다.':'');
+    st.textContent=added+TR('건을 합쳤습니다.')+(dup?TR(' 이미 있는 ')+dup+TR('건은 건너뛰었습니다.'):'');
   }catch(err){
-    st.className='ai err'; st.textContent='실패: '+String(err.message||err).slice(0,90);
+    st.className='ai err'; st.textContent=TR('실패: ')+String(err.message||err).slice(0,90);
   }
 });
 
 /* ───── 명부 ───── */
+/* 목록·상세에 쓴 사진 주소를 모아 두었다가 다시 그릴 때 회수합니다.
+   회수하지 않으면 사진이 메모리에 계속 쌓여 3~4일차에 앱이 강제 새로고침됩니다. */
+let _purls=[];
+function purl(blob){ const u=URL.createObjectURL(blob); _purls.push(u); return u; }
+let _durl=null;
+function durl(blob){
+  if(_durl){ try{URL.revokeObjectURL(_durl)}catch(e){} }
+  _durl=URL.createObjectURL(blob); return _durl;
+}
+function purlClear(){
+  const old=_purls; _purls=[];
+  setTimeout(()=>{ for(const u of old){ try{URL.revokeObjectURL(u)}catch(e){} } },1500);
+}
+
 function render(){
   if(typeof composing!=='undefined'&&composing){setTimeout(render,300);return}
   $('count').textContent=rows.length;
   $('staffName').textContent=cfg.staff||t('unset');
   renderFilters(); renderStats();
   const list=(filterStaff?rows.filter(r=>(r.staff||'').trim()===filterStaff):rows).filter(matchQ);
+  purlClear();
   const box=$('slips');
   if(!list.length){
     box.innerHTML='<div class="empty"><b>'+t('emptyT')+'</b>'+t('emptyS')+'</div>';paintSel();return;
@@ -1504,7 +1621,7 @@ function render(){
     const no=list.length-idx;
     return `<article class="slip${r.imported?' imp':''}${sel.has(r.id)?' on':''}" data-id="${r.id}">
       <div class="pick"><input type="checkbox" class="pk" ${sel.has(r.id)?'checked':''}></div>
-      <div class="tapzone">${r.photo?`<img src="${URL.createObjectURL(r.photo)}" alt="badge">`:`<div class="nopic">${t('noPic')}</div>`}</div>
+      <div class="tapzone">${r.photo?`<img src="${purl(r.photo)}" alt="badge">`:`<div class="nopic">${t('noPic')}</div>`}</div>
       <div class="body">
         <div class="no"><span>NO.${pad(no)}</span><span>${esc(r.at)}${r.staff?' · '+esc(r.staff):''}</span></div>
         <h3 class="tapzone">${esc(r.company||t('noName'))}</h3>
@@ -1552,11 +1669,11 @@ $('s-paste').addEventListener('click',async()=>{
   const s=$('testStatus');
   try{
     const t=(await navigator.clipboard.readText()||'').trim();
-    if(!t){s.className='ai err';s.textContent='복사된 내용이 없습니다';return}
+    if(!t){s.className='ai err';s.textContent=TR('복사된 내용이 없습니다');return}
     $('s-key').value=t;
-    s.className='ai';s.textContent='붙여넣었습니다. 키 연결 확인을 누르세요';
+    s.className='ai';s.textContent=TR('붙여넣었습니다. 키 연결 확인을 누르세요');
   }catch(e){
-    s.className='ai err';s.textContent='붙여넣기 권한이 없습니다. 입력칸을 길게 눌러 붙여넣기 하세요';
+    s.className='ai err';s.textContent=TR('붙여넣기 권한이 없습니다. 입력칸을 길게 눌러 붙여넣기 하세요');
   }
 });
 $('s-eye').addEventListener('click',()=>{
@@ -1577,34 +1694,34 @@ async function pingModel(key,model){
 $('s-test').addEventListener('click',async()=>{
   const k=$('s-key').value.trim();
   const s=$('testStatus');
-  if(!k){s.className='ai err';s.textContent='먼저 API 키를 붙여넣으세요';return}
-  if(!/^sk-ant-/.test(k)){s.className='ai err';s.textContent='키 형식이 다릅니다. sk-ant- 으로 시작해야 합니다';return}
+  if(!k){s.className='ai err';s.textContent=TR('먼저 API 키를 붙여넣으세요');return}
+  if(!/^sk-ant-/.test(k)){s.className='ai err';s.textContent=TR('키 형식이 다릅니다. sk-ant- 으로 시작해야 합니다');return}
 
   const first=$('s-model').value.trim();
   const list=[...new Set([first,...MODEL_CANDIDATES].filter(Boolean))];
   s.className='ai';s.innerHTML='<span class="spin"></span>확인 중…';
   let lastErr='';
   for(const m of list){
-    s.innerHTML='<span class="spin"></span>'+m+' 확인 중…';
+    s.innerHTML='<span class="spin"></span>'+m+TR(' 확인 중…');
     let res;
-    try{ res=await pingModel(k,m) }catch(e){ lastErr='인터넷 연결을 확인하세요'; break }
+    try{ res=await pingModel(k,m) }catch(e){ lastErr=TR('인터넷 연결을 확인하세요'); break }
     if(res.ok){
       cfg.key=k;cfg.model=m;cfgSave();$('s-model').value=m;
-      s.className='ai on';s.textContent='연결 성공 — 자동 인식이 켜졌습니다 ('+m+')';
+      s.className='ai on';s.textContent=TR('연결 성공 — 자동 인식이 켜졌습니다 (')+m+')';
       return;
     }
-    if(res.status===401||res.status===403){ lastErr='키가 올바르지 않거나 권한이 없습니다'; break }
-    if(res.status===429){ lastErr='요청이 많습니다. 잠시 후 다시 시도하세요'; break }
-    if(res.status===400&&/credit|balance/i.test(res.text)){ lastErr='계정 잔액이 부족합니다'; break }
+    if(res.status===401||res.status===403){ lastErr=TR('키가 올바르지 않거나 권한이 없습니다'); break }
+    if(res.status===429){ lastErr=TR('요청이 많습니다. 잠시 후 다시 시도하세요'); break }
+    if(res.status===400&&/credit|balance/i.test(res.text)){ lastErr=TR('계정 잔액이 부족합니다'); break }
     lastErr=res.status+' '+res.text;
   }
-  s.className='ai err';s.textContent='실패: '+lastErr;
+  s.className='ai err';s.textContent=TR('실패: ')+lastErr;
 });
 async function usage(){
   let b=0;rows.forEach(r=>{if(r.photo)b+=r.photo.size});
   let q='';
-  try{const est=await navigator.storage.estimate();if(est&&est.quota)q=' · 사용 가능 약 '+Math.round(est.quota/1048576)+'MB'}catch(e){}
-  $('usage').textContent='기록 '+rows.length+'건 · 사진 '+(b/1048576).toFixed(1)+'MB'+q;
+  try{const est=await navigator.storage.estimate();if(est&&est.quota)q=TR(' · 사용 가능 약 ')+Math.round(est.quota/1048576)+'MB'}catch(e){}
+  $('usage').textContent=TR('기록 ')+rows.length+TR('건 · 사진 ')+(b/1048576).toFixed(1)+'MB'+q;
 }
 $('langBtns').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b)return;
@@ -1624,13 +1741,17 @@ function paintKeyState(){
   if(cfg.key){ st.className='ai on'; st.textContent=t('aiOn'); }
   else{ st.className='ai'; st.textContent=t('aiOff'); }
 }
-function paintScanBtn(){ $('s-scan').textContent = t(cfg.scan?'scanOnBtn':'scanOffBtn'); }
+function paintScanBtn(){
+  $('s-scan').textContent = t(cfg.scan?'scanOnBtn':'scanOffBtn');
+  const cb=$('s-crop'); if(cb) cb.textContent = t(cfg.crop!==false?'cropOnBtn':'cropOffBtn');
+}
 $('s-scan').addEventListener('click',()=>{ cfg.scan=!cfg.scan; cfgSave(); paintScanBtn(); toast(t(cfg.scan?'scanOnBtn':'scanOffBtn')); });
+$('s-crop').addEventListener('click',()=>{ cfg.crop=(cfg.crop===false); cfgSave(); paintScanBtn(); toast(t(cfg.crop!==false?'cropOnBtn':'cropOffBtn')); });
 $('s-wipe').addEventListener('click',async()=>{
   if(!rows.length)return;
-  if(!confirm('기록 '+rows.length+'건과 사진을 모두 삭제합니다. 되돌릴 수 없습니다.\n\nCSV와 사진을 먼저 내보냈는지 확인하세요.'))return;
-  if(!confirm('정말 삭제할까요?'))return;
-  rows=[];await dbClear();render();usage();toast('전체 삭제했습니다');
+  if(!confirm(TR('기록 ')+rows.length+'건과 사진을 모두 삭제합니다. 되돌릴 수 없습니다.\n\nCSV와 사진을 먼저 내보냈는지 확인하세요.'))return;
+  if(!confirm(TR('정말 삭제할까요?')))return;
+  rows=[];await dbClear();render();usage();toast(TR('전체 삭제했습니다'));
 });
 
 /* ───── 내보내기 ───── */
@@ -1642,21 +1763,21 @@ $('exCsv').addEventListener('click',()=>{
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const list=[...targetRows()].reverse();
   if(!list.length){toast(t('tNoRec'));return}
-  const csv='\uFEFF'+['번호,접수시각,담당자,회사명,성함,직함,전화번호,이메일,회사주소,등급,관심품목,샘플북요청,속지품번,메모,사진파일명']
+  const csv='\uFEFF'+['No,Timestamp,Staff,Company,Name,Title,Phone,Email,Address,Grade,Interests,SampleBooks,InsertCode,Memo,PhotoFile']
     .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.title,r.phone,r.email,r.addr,r.grade,(r.items||[]).join(' / '),(r.books||[]).join(' / '),r.spec,r.memo,
-      pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
+      pad(i+1)+'_'+(r.company||TR('무명')).replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
     .join('\r\n');
-  dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'ACTIVAKOREA_명부_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
+  dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'ACTIVAKOREA_Leads_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
   toast(t('tCsv'));
 });
 $('exZip').addEventListener('click',async()=>{
   if(!rows.length){toast(t('tNoRec'));return}
-  if(typeof JSZip==='undefined'){toast('압축 기능을 불러오지 못했습니다 (인터넷 확인)');return}
-  toast('사진을 묶는 중…');
+  if(typeof JSZip==='undefined'){toast(TR('압축 기능을 불러오지 못했습니다 (인터넷 확인)'));return}
+  toast(TR('사진을 묶는 중…'));
   const zip=new JSZip(), list=[...targetRows()].reverse();
-  list.forEach((r,i)=>{if(r.photo)zip.file(pad(i+1)+'_'+(r.company||'무명').replace(/[\\/:*?"<>|]/g,'')+'.jpg',r.photo)});
+  list.forEach((r,i)=>{if(r.photo)zip.file(pad(i+1)+'_'+(r.company||TR('무명')).replace(/[\\/:*?"<>|]/g,'')+'.jpg',r.photo)});
   const b=await zip.generateAsync({type:'blob'});
-  dl(b,'ACTIVAKOREA_사진_'+(cfg.staff||'담당자')+'_'+today()+'.zip');
+  dl(b,'ACTIVAKOREA_Photos_'+(cfg.staff||'담당자')+'_'+today()+'.zip');
   toast(t('tZip'));
 });
 
@@ -1675,10 +1796,10 @@ $('exZip').addEventListener('click',async()=>{
 $('s-link').addEventListener('click',async()=>{
   const st=$('linkStatus');
   const k=(cfg.key||$('s-key').value).trim();
-  if(!k){st.className='ai err';st.textContent='먼저 키를 넣고 연결 확인을 하세요';return}
+  if(!k){st.className='ai err';st.textContent=TR('먼저 키를 넣고 연결 확인을 하세요');return}
   const base=location.origin+location.pathname;
   const link=base+'?k='+encodeURIComponent(btoa(unescape(encodeURIComponent(k))))+(cfg.model?'&m='+encodeURIComponent(cfg.model):'')+(cfg.sync?'&s='+encodeURIComponent(btoa(cfg.sync)):'');
-  try{ await navigator.clipboard.writeText(link); st.className='ai on'; st.textContent='링크를 복사했습니다. 직원에게 보내세요'+(cfg.sync?' (구글 시트 연결도 함께 전달됩니다)':''); }
+  try{ await navigator.clipboard.writeText(link); st.className='ai on'; st.textContent=TR('링크를 복사했습니다. 직원에게 보내세요')+(cfg.sync?TR(' (구글 시트 연결도 함께 전달됩니다)'):''); }
   catch(e){ st.className='ai'; st.textContent=link; }
 });
 
@@ -1728,7 +1849,7 @@ function applyInstallLink(){
     <button class="go">기본 브라우저로 열기</button>
     <div class="url">${url}</div>
     <button class="cp">주소 복사하기</button>
-    <p>버튼이 안 되면 위 주소를 복사해서 ${isiOS?'사파리':'크롬'} 주소창에 붙여넣으세요.
+    <p>버튼이 안 되면 위 주소를 복사해서 ${isiOS?TR('사파리'):TR('크롬')} 주소창에 붙여넣으세요.
     또는 오른쪽 위 <b>⋯</b> 메뉴에서 <b>다른 브라우저로 열기</b>를 누르세요.</p>
     <button class="skip">그래도 여기서 볼래요</button>`;
   document.body.appendChild(box);
@@ -1739,10 +1860,10 @@ function applyInstallLink(){
     else window.open(url,'_blank');
   });
   box.querySelector('.cp').addEventListener('click',async e=>{
-    try{ await navigator.clipboard.writeText(url); e.target.textContent='복사했습니다'; }
+    try{ await navigator.clipboard.writeText(url); e.target.textContent=TR('복사했습니다'); }
     catch(err){
       const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);
-      t.select();try{document.execCommand('copy');e.target.textContent='복사했습니다'}catch(_){e.target.textContent='주소를 길게 눌러 복사하세요'}
+      t.select();try{document.execCommand('copy');e.target.textContent=TR('복사했습니다')}catch(_){e.target.textContent=TR('주소를 길게 눌러 복사하세요')}
       t.remove();
     }
   });
@@ -1761,7 +1882,7 @@ paintBar('new');
   applyFont();
   applyLang();
   $('s-staff').value=cfg.staff; $('s-key').value=cfg.key; $('s-model').value=cfg.model||'';
-  if(linked)setTimeout(()=>toast('설정을 받았습니다 — 자동 인식이 켜졌습니다'),800);
+  if(linked)setTimeout(()=>toast(TR('설정을 받았습니다 — 자동 인식이 켜졌습니다')),800);
   const ok=await openDB();
   if(!ok)$('storeWarn').hidden=false;
   rows=(await dbAll()).sort((a,b)=>b.id-a.id);
@@ -1770,7 +1891,7 @@ paintBar('new');
     if(mir.length){                       // 저장소가 비었는데 예비본이 있으면 되살립니다
       rows=mir.sort((a,b)=>b.id-a.id);
       for(const r of rows){ try{ await dbPut(r) }catch(e){} }
-      setTimeout(()=>toast('예비 저장본에서 '+rows.length+'건을 복구했습니다'),900);
+      setTimeout(()=>toast(TR('예비 저장본에서 ')+rows.length+TR('건을 복구했습니다')),900);
     }
   }
   mirrorSave();
