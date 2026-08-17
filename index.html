@@ -80,6 +80,12 @@ section[hidden]{display:none}
 .shoot:disabled{opacity:.5;box-shadow:none}
 .shoot.alt{margin-top:14px;background:none;color:var(--mut);font-size:.78rem;font-weight:600;box-shadow:none;padding:4px}
 .shoot.alt:active{color:var(--brand)}
+.duo{display:flex;gap:9px;margin-top:14px}
+.duo button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 6px;border-radius:12px;background:var(--bg);color:var(--sub);font-size:.72rem;font-weight:700;line-height:1.3}
+.duo button i{font-style:normal;font-size:.95rem;color:var(--mut)}
+.duo button:active{background:var(--soft);color:var(--brand)}
+.duo button:active i{color:var(--brand)}
+.duo button:disabled{opacity:.5}
 .tip{display:flex;gap:13px;align-items:flex-start;background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:17px 18px;margin-top:14px}
 .tip .ic{flex:0 0 32px;height:32px;border-radius:9px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:.8rem}
 .tip b{display:block;font-size:.6rem;font-weight:800;letter-spacing:.18em;color:var(--mut);text-transform:uppercase}
@@ -286,9 +292,12 @@ section[hidden]{display:none}
     <h2 data-i18n="heroTitle">명함을 촬영해주세요</h2>
     <p data-i18n="heroSub">명함이나 방문증을 프레임 안에 맞춰주세요.</p>
     <button class="shoot" id="shootBtn" data-i18n="shootB">명함 · 방문증 촬영</button>
-    <button class="shoot alt" id="pickBtn" data-i18n="pickB">또는 사진첩에서 선택</button>
-    <button class="shoot alt" id="typeBtn" data-i18n="typeB">명함 없이 직접 입력</button>
+    <div class="duo">
+      <button id="pickBtn"><i>▤</i><span data-i18n="pickB">사진첩에서 선택</span></button>
+      <button id="typeBtn"><i>✎</i><span data-i18n="typeB">직접 입력</span></button>
+    </div>
   </div>
+
   <div class="tip">
     <div class="ic">💡</div>
     <div><b data-i18n="tipT">TIP</b><span data-i18n="tipS">촬영하면 회사명과 이름이 자동으로 인식되어 명부에 저장됩니다.</span></div>
@@ -435,7 +444,7 @@ section[hidden]{display:none}
     <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
-  <div class="ver">Ver 1.4.0</div>
+  <div class="ver">Ver 1.4.2</div>
 </section>
 </main>
 
@@ -475,7 +484,7 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  tabNew:'접수',tabList:'명부',tabSet:'설정',
  storeWarn:'저장 기능이 작동하지 않는 환경입니다. 지금 기록하면 화면을 닫는 순간 사라집니다. 반드시 배포한 주소(https://)에서 사용하세요.',
  shootB:'명함 · 방문증 촬영',shootS:'휴대폰 카메라가 열립니다',
- pickB:'또는 사진첩에서 선택',pickS:'여러 장을 한 번에 불러올 수 있습니다',
+ pickB:'사진첩에서 선택',pickS:'여러 장을 한 번에 불러올 수 있습니다',
  bulkTitle:'사진을 불러오는 중…',rePhoto:'사진 다시 찍기',rePick:'사진첩에서 고르기',
  scanOrig:'원본 보기',scanFix:'스캔 보정',delPhoto:'사진 삭제',noPhoto:'사진 없음 — 메모만 저장됩니다',
  lCompany:'회사명',lName:'성함',lTitle:'직함',lPhone:'전화번호',lEmail:'이메일',lAddr:'회사 주소',
@@ -518,7 +527,7 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  cPrivate:'여기서 저장한 기록은 다른 브라우저에서 보이지 않습니다.\n시험용으로만 사용하세요.\n\n계속할까요?',
  mChk:'확인 중…',mConnChk:'연결 확인 중…',mFileRead:'파일을 읽는 중…',
  dow:'일,월,화,수,목,금,토',
- typeB:'명함 없이 직접 입력',aiManual:'직접 입력 중 — 아래 칸을 채워 주세요',
+ typeB:'직접 입력',aiManual:'직접 입력 중 — 아래 칸을 채워 주세요',
  scanOnBtn:'자동 보정 켜짐 — 누르면 끕니다',scanOffBtn:'자동 보정 꺼짐 — 누르면 켭니다',
  cropOnBtn:'테두리 자동 잘라내기 켜짐 — 누르면 끕니다',cropOffBtn:'테두리 자동 잘라내기 꺼짐 — 누르면 켭니다',
  sCropH:'테두리 자동 잘라내기',
@@ -529,7 +538,7 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  tabNew:'New',tabList:'List',tabSet:'Settings',
  storeWarn:'Storage is not working here. Anything you record now disappears when you close this screen. Please use the published https:// address.',
  shootB:'Take a photo',shootS:'Opens your phone camera',
- pickB:'Or choose from photos',pickS:'You can import several at once',
+ pickB:'From photos',pickS:'You can import several at once',
  bulkTitle:'Importing photos…',rePhoto:'Retake photo',rePick:'Pick from photos',
  scanOrig:'View original',scanFix:'Scan cleanup',delPhoto:'Delete photo',noPhoto:'No photo — notes only',
  lCompany:'Company',lName:'Name',lTitle:'Job title',lPhone:'Phone',lEmail:'Email',lAddr:'Company address',
@@ -572,7 +581,7 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  cPrivate:'Records saved here will not be visible in other browsers.\nUse this for testing only.\n\nContinue?',
  mChk:'Checking…',mConnChk:'Checking connection…',mFileRead:'Reading the file…',
  dow:'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
- typeB:'Enter details without a card',aiManual:'Manual entry — please fill in the fields below',
+ typeB:'Type manually',aiManual:'Manual entry — please fill in the fields below',
  scanOnBtn:'Auto cleanup ON — tap to turn off',scanOffBtn:'Auto cleanup OFF — tap to turn on',
  cropOnBtn:'Auto edge crop ON — tap to turn off',cropOffBtn:'Auto edge crop OFF — tap to turn on',
  sCropH:'Auto edge crop',
@@ -583,7 +592,7 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  tabNew:'登记',tabList:'名录',tabSet:'设置',
  storeWarn:'当前环境无法保存数据。现在记录的内容在关闭页面后会消失。请使用已发布的 https:// 网址。',
  shootB:'拍摄名片 · 参观证',shootS:'将打开手机相机',
- pickB:'或从相册选择',pickS:'可一次导入多张',
+ pickB:'从相册选择',pickS:'可一次导入多张',
  bulkTitle:'正在导入照片…',rePhoto:'重新拍摄',rePick:'从相册选择',
  scanOrig:'查看原图',scanFix:'扫描优化',delPhoto:'删除照片',noPhoto:'无照片 — 仅保存备注',
  lCompany:'公司名称',lName:'姓名',lTitle:'职务',lPhone:'电话',lEmail:'邮箱',lAddr:'公司地址',
@@ -626,7 +635,7 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  cPrivate:'在此保存的记录在其他浏览器中不可见。\n仅供测试使用。\n\n继续吗？',
  mChk:'检查中…',mConnChk:'检查连接中…',mFileRead:'正在读取文件…',
  dow:'周日,周一,周二,周三,周四,周五,周六',
- typeB:'无名片，手动输入',aiManual:'手动输入中 — 请填写下方各项',
+ typeB:'手动输入',aiManual:'手动输入中 — 请填写下方各项',
  scanOnBtn:'自动优化已开启 — 点击关闭',scanOffBtn:'自动优化已关闭 — 点击开启',
  cropOnBtn:'自动裁边已开启 — 点击关闭',cropOffBtn:'自动裁边已关闭 — 点击开启',
  sCropH:'自动裁边',
