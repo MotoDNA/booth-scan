@@ -45,7 +45,8 @@ header{padding:22px 22px 0;display:flex;justify-content:space-between;align-item
 .logo{max-height:30px;max-width:180px;display:block;object-fit:contain}
 .wordmark{font-size:1.34rem;font-weight:800;letter-spacing:.01em;line-height:1;color:var(--brand);display:flex;gap:5px;align-items:baseline}
 .wordmark em{font-style:normal;font-weight:500;color:var(--ink);font-size:1.05rem}
-.sub{font-size:.68rem;font-weight:600;letter-spacing:.16em;color:var(--sub);margin-top:9px;text-transform:uppercase}
+.sub{font-size:.68rem;font-weight:600;letter-spacing:.16em;color:var(--sub);margin-top:9px;text-transform:uppercase;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.vtag{font-family:var(--mono);font-size:.58rem;font-weight:700;letter-spacing:.04em;color:var(--mut);background:var(--soft);border-radius:5px;padding:2px 6px;text-transform:none;flex:0 0 auto}
 .who{font-size:.66rem;font-weight:600;letter-spacing:.13em;color:var(--mut);margin-top:5px;text-transform:uppercase}
 .who b{color:var(--ink);font-weight:700}
 .cnt{text-align:right;line-height:1;flex:0 0 auto}
@@ -135,6 +136,12 @@ section[hidden]{display:none}
 .warn{background:#FBE4E0;color:#8E2E1D;padding:14px 16px;border-radius:12px;font-size:.74rem;line-height:1.6;margin-bottom:16px}
 
 /* ═══ 명부 ═══ */
+.presence{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:12px 15px;margin-bottom:14px}
+.presence b{font-size:.6rem;font-weight:800;letter-spacing:.14em;color:var(--mut);text-transform:uppercase;margin-right:2px}
+.presence i{font-style:normal;display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;color:var(--ink);background:var(--bg);border-radius:999px;padding:5px 11px}
+.presence i::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+.presence i.me{background:var(--soft);color:var(--brand)}
+.presence i.idle::before{background:#D9C48A}
 .today{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
 .today b{font-size:.68rem;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
 .today span{font-size:.7rem;color:var(--mut);font-weight:600}
@@ -269,7 +276,7 @@ section[hidden]{display:none}
   <div class="brandwrap">
     <img id="logo" class="logo" src="logo.png" alt="ACTIVA KOREA" hidden>
     <div id="wordmark" class="wordmark">ACTIVA<em>KOREA</em></div>
-    <div class="sub" data-i18n="sub">ACTIVA KOREA · 부스 접수대</div>
+    <div class="sub"><span data-i18n="sub">ACTIVA KOREA · 부스 접수대</span><span class="vtag" id="verTop">v—</span></div>
     <div class="who"><span data-i18n="staffLbl">담당자</span> <b id="staffName">미설정</b></div>
   </div>
   <div class="cnt"><b id="count">0</b><span data-i18n="scans">접수</span><span class="syncpill" id="syncPill" hidden></span></div>
@@ -352,6 +359,7 @@ section[hidden]{display:none}
 </section>
 
 <section id="p-list" hidden>
+  <div class="presence" id="presence" hidden></div>
   <div class="today"><b data-i18n="today">TODAY</b><span id="todayDate"></span></div>
   <div class="stats" id="stats"></div>
   <div class="searchrow">
@@ -434,6 +442,7 @@ section[hidden]{display:none}
     </div>
     <div class="ai" id="syncStatus"></div>
     <button class="sec" id="s-syncNow" style="width:100%" data-i18n="bSyncNow">지금 바로 동기화</button>
+    <button class="sec" id="s-resync" style="width:100%;margin-top:8px" data-i18n="bReSync">명부 전체를 시트로 다시 보내기</button>
   </div>
   <div class="setrow">
     <h4 data-i18n="sImpH">다른 담당자 기록 합치기</h4>
@@ -449,7 +458,7 @@ section[hidden]{display:none}
     <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
-  <div class="ver">Ver 1.5.2</div>
+  <div class="ver" id="verBottom">Ver 1.6.0</div>
 </section>
 </main>
 
@@ -532,7 +541,7 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  cPrivate:'여기서 저장한 기록은 다른 브라우저에서 보이지 않습니다.\n시험용으로만 사용하세요.\n\n계속할까요?',
  mChk:'확인 중…',mConnChk:'연결 확인 중…',mFileRead:'파일을 읽는 중…',
  dow:'일,월,화,수,목,금,토',
- typeB:'직접 입력',aiManual:'직접 입력 중 — 아래 칸을 채워 주세요',
+ typeB:'직접 입력',presH:'접속 중',presMe:'나',presIdle:'분 전',bReSync:'명부 전체를 시트로 다시 보내기',cReSync:'이 폰의 기록 %n건을 시트로 다시 보냅니다.\n시트에 이미 있는 것은 덮어써지고 새로 생기지 않습니다.\n\n계속할까요?',aiManual:'직접 입력 중 — 아래 칸을 채워 주세요',
  scanOnBtn:'자동 보정 켜짐 — 누르면 끕니다',scanOffBtn:'자동 보정 꺼짐 — 누르면 켭니다',
  cropOnBtn:'테두리 자동 잘라내기 켜짐 — 누르면 끕니다',cropOffBtn:'테두리 자동 잘라내기 꺼짐 — 누르면 켭니다',
  sCropH:'테두리 자동 잘라내기',
@@ -586,7 +595,7 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  cPrivate:'Records saved here will not be visible in other browsers.\nUse this for testing only.\n\nContinue?',
  mChk:'Checking…',mConnChk:'Checking connection…',mFileRead:'Reading the file…',
  dow:'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
- typeB:'Type manually',aiManual:'Manual entry — please fill in the fields below',
+ typeB:'Type manually',presH:'Online now',presMe:'me',presIdle:'m ago',bReSync:'Re-send the whole list to the sheet',cReSync:'Re-send all %n records on this phone to the sheet.\nExisting rows are overwritten, not duplicated.\n\nContinue?',aiManual:'Manual entry — please fill in the fields below',
  scanOnBtn:'Auto cleanup ON — tap to turn off',scanOffBtn:'Auto cleanup OFF — tap to turn on',
  cropOnBtn:'Auto edge crop ON — tap to turn off',cropOffBtn:'Auto edge crop OFF — tap to turn on',
  sCropH:'Auto edge crop',
@@ -640,7 +649,7 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  cPrivate:'在此保存的记录在其他浏览器中不可见。\n仅供测试使用。\n\n继续吗？',
  mChk:'检查中…',mConnChk:'检查连接中…',mFileRead:'正在读取文件…',
  dow:'周日,周一,周二,周三,周四,周五,周六',
- typeB:'手动输入',aiManual:'手动输入中 — 请填写下方各项',
+ typeB:'手动输入',presH:'在线',presMe:'我',presIdle:'分钟前',bReSync:'将名录全部重新发送到表格',cReSync:'将本手机的 %n 条记录重新发送到表格。\n表格中已有的记录会被覆盖，不会重复。\n\n继续吗？',aiManual:'手动输入中 — 请填写下方各项',
  scanOnBtn:'自动优化已开启 — 点击关闭',scanOffBtn:'自动优化已关闭 — 点击开启',
  cropOnBtn:'自动裁边已开启 — 点击关闭',cropOffBtn:'自动裁边已关闭 — 点击开启',
  sCropH:'自动裁边',
@@ -676,6 +685,8 @@ function applyLang(){
   const tb=$('toggleScan'); if(tb)tb.textContent=t(draft&&draft.scanOn?'scanOrig':'scanFix');
   const ey=$('s-eye'); if(ey)ey.textContent=t($('s-key').type==='password'?'bShow':'bHide');
   const wp=$('s-wipe'); if(wp)wp.textContent=t('bWipe');
+  const vt=$('verTop'); if(vt)vt.textContent='v'+APP_VER;
+  const vb=$('verBottom'); if(vb)vb.textContent='Ver '+APP_VER;
   /* 언어를 바꾸기 전에 떠 있던 안내 문구는 지웁니다 */
   const tst=$('toast'); if(tst){tst.textContent=''; tst.classList.remove('on');}
 }
@@ -692,6 +703,7 @@ const BOOK_T={'MUSE 1':{en:'MUSE 1',zh:'MUSE 1'},'MUSE 2':{en:'MUSE 2',zh:'MUSE 
 function bookLabel(id){ const m=BOOK_T[id]; return (m&&cfg.lang!=='ko'&&m[cfg.lang])?m[cfg.lang]:id; }
 const TRD={"확인 중…": {"en": "Checking…", "zh": "检查中…"}, "IndexedDB 사용 가능: ": {"en": "IndexedDB available: ", "zh": "IndexedDB 可用: "}, "예": {"en": "Yes", "zh": "是"}, "아니오": {"en": "No", "zh": "否"}, "저장소 열기: ": {"en": "Open database: ", "zh": "打开数据库: "}, "성공": {"en": "OK", "zh": "成功"}, "실패": {"en": "Failed", "zh": "失败"}, "읽기 실패": {"en": "Read failed", "zh": "读取失败"}, "저장소에 있는 기록: ": {"en": "Records in database: ", "zh": "数据库中的记录: "}, "건": {"en": "", "zh": "条"}, "화면에 있는 기록: ": {"en": "Records on screen: ", "zh": "屏幕上的记录: "}, "예비 저장본: ": {"en": "Backup copy: ", "zh": "备用存档: "}, "db 없음": {"en": "no db", "zh": "无数据库"}, "put 실패": {"en": "put failed", "zh": "写入失败"}, "쓰기 시험: 성공": {"en": "Write test: OK", "zh": "写入测试: 成功"}, "쓰기 시험: 실패 (": {"en": "Write test: failed (", "zh": "写入测试: 失败 ("}, "여유 공간: 약 ": {"en": "Free space: approx. ", "zh": "可用空间: 约 "}, "마지막 오류: ": {"en": "Last error: ", "zh": "最后错误: "}, "압축 실패": {"en": "Resize failed", "zh": "压缩失败"}, "이미지를 읽지 못했습니다": {"en": "Could not read the image", "zh": "无法读取图片"}, "파일을 읽지 못했습니다": {"en": "Could not read the file", "zh": "无法读取文件"}, "자동으로 ": {"en": "Filled ", "zh": "已自动填写 "}, "개 항목을 채웠습니다 — 틀린 곳은 고쳐 주세요": {"en": " field(s) automatically — please correct any errors", "zh": " 个项目 — 请修正有误之处"}, "글자를 읽지 못했습니다. 직접 입력하세요": {"en": "Could not read the text. Please type it in.", "zh": "无法识别文字，请手动输入"}, "자동 인식 실패 — 직접 입력하세요 (": {"en": "Auto recognition failed — please type it in (", "zh": "自动识别失败 — 请手动输入 ("}, "사진 ": {"en": "Photo ", "zh": "照片 "}, "불러오는 중 ": {"en": "Loading ", "zh": "载入中 "}, "방문증 글자를 읽는 중…": {"en": "Reading the badge…", "zh": "正在识别参观证…"}, "저장 ": {"en": "Saved ", "zh": "已保存 "}, " · 실패 ": {"en": " · failed ", "zh": " · 失败 "}, "완료": {"en": "Done", "zh": "完成"}, "건을 명부에 넣었습니다.": {"en": " record(s) added to the list.", "zh": " 条记录已加入名单。"}, " 자동 인식 ": {"en": " auto-recognised ", "zh": " 自动识别 "}, "건.": {"en": " record(s).", "zh": " 条。"}, " 명부에서 회사명과 이름을 입력하세요.": {"en": " Enter company and name in the list.", "zh": " 请在名单中填写公司名和姓名。"}, "내용을 입력하거나 사진을 넣어 주세요": {"en": "Please enter details or add a photo", "zh": "请输入内容或添加照片"}, " 번": {"en": " ", "zh": "号"}, "보정 중…": {"en": "Cleaning up…", "zh": "优化中…"}, "인터넷 연결 없음": {"en": "No internet connection", "zh": "无网络连接"}, "서버 응답 ": {"en": "Server response ", "zh": "服务器响应 "}, "서버 오류": {"en": "Server error", "zh": "服务器错误"}, "동기화 실패: ": {"en": "Sync failed: ", "zh": "同步失败: "}, "입력칸을 길게 눌러 붙여넣기 하세요": {"en": "Press and hold the field to paste", "zh": "长按输入框粘贴"}, "주소가 script.google.com 으로 시작하고 /exec 로 끝나야 합니다": {"en": "The URL must start with script.google.com and end with /exec", "zh": "网址须以 script.google.com 开头、/exec 结尾"}, "연결 확인 중…": {"en": "Checking connection…", "zh": "检查连接中…"}, "연결 성공 — 시트에 ": {"en": "Connected — the sheet has ", "zh": "连接成功 — 表格中有 "}, "건이 있습니다": {"en": " record(s)", "zh": " 条记录"}, "실패: ": {"en": "Failed: ", "zh": "失败: "}, " (배포 시 액세스 권한을 모든 사용자로 했는지 확인하세요)": {"en": " (check that deployment access is set to Anyone)", "zh": "（请确认部署访问权限设为所有人）"}, "먼저 주소를 연결하세요": {"en": "Connect the URL first", "zh": "请先连接网址"}, "동기화 완료": {"en": "Sync complete", "zh": "同步完成"}, "압축 기능을 불러오지 못했습니다": {"en": "Could not load the zip library", "zh": "无法载入压缩功能"}, "압축 기능을 불러오지 못했습니다 (인터넷 확인)": {"en": "Could not load the zip library (check internet)", "zh": "无法载入压缩功能（请检查网络）"}, "파일을 읽는 중…": {"en": "Reading the file…", "zh": "正在读取文件…"}, "내용이 없습니다": {"en": "The file is empty", "zh": "没有内容"}, "이 앱에서 내보낸 CSV가 아닙니다": {"en": "This CSV was not exported from this app", "zh": "这不是本应用导出的 CSV"}, "건을 합쳤습니다.": {"en": " record(s) merged.", "zh": " 条记录已合并。"}, " 이미 있는 ": {"en": " Skipped ", "zh": " 已跳过 "}, "건은 건너뛰었습니다.": {"en": " duplicate(s).", "zh": " 条重复记录。"}, "복사된 내용이 없습니다": {"en": "Nothing to paste", "zh": "剪贴板为空"}, "붙여넣었습니다. 키 연결 확인을 누르세요": {"en": "Pasted. Tap Check key connection.", "zh": "已粘贴，请点击密钥连接确认"}, "붙여넣기 권한이 없습니다. 입력칸을 길게 눌러 붙여넣기 하세요": {"en": "No paste permission. Press and hold the field to paste.", "zh": "无粘贴权限，请长按输入框粘贴"}, "먼저 API 키를 붙여넣으세요": {"en": "Paste the API key first", "zh": "请先粘贴 API 密钥"}, "키 형식이 다릅니다. sk-ant- 으로 시작해야 합니다": {"en": "Wrong key format. It must start with sk-ant-", "zh": "密钥格式有误，须以 sk-ant- 开头"}, " 확인 중…": {"en": " checking…", "zh": " 检查中…"}, "인터넷 연결을 확인하세요": {"en": "Check your internet connection", "zh": "请检查网络连接"}, "연결 성공 — 자동 인식이 켜졌습니다 (": {"en": "Connected — auto recognition is on (", "zh": "连接成功 — 自动识别已开启 ("}, "키가 올바르지 않거나 권한이 없습니다": {"en": "The key is invalid or lacks permission", "zh": "密钥无效或无权限"}, "요청이 많습니다. 잠시 후 다시 시도하세요": {"en": "Too many requests. Try again shortly.", "zh": "请求过多，请稍后重试"}, "계정 잔액이 부족합니다": {"en": "Insufficient account balance", "zh": "账户余额不足"}, " · 사용 가능 약 ": {"en": " · approx. free ", "zh": " · 可用约 "}, "기록 ": {"en": "Records ", "zh": "记录 "}, "건 · 사진 ": {"en": " · photos ", "zh": " 条 · 照片 "}, "정말 삭제할까요?": {"en": "Delete for real?", "zh": "确定要删除吗？"}, "전체 삭제했습니다": {"en": "Everything deleted", "zh": "已全部删除"}, "무명": {"en": "Unnamed", "zh": "无名"}, "사진을 묶는 중…": {"en": "Zipping photos…", "zh": "正在打包照片…"}, "먼저 키를 넣고 연결 확인을 하세요": {"en": "Enter the key and check the connection first", "zh": "请先输入密钥并确认连接"}, "링크를 복사했습니다. 직원에게 보내세요": {"en": "Link copied. Send it to your staff.", "zh": "已复制链接，请发送给员工"}, " (구글 시트 연결도 함께 전달됩니다)": {"en": " (the Google Sheet connection is included)", "zh": "（同时包含 Google 表格连接）"}, "사파리": {"en": "Safari", "zh": "Safari"}, "크롬": {"en": "Chrome", "zh": "Chrome"}, "복사했습니다": {"en": "Copied", "zh": "已复制"}, "주소를 길게 눌러 복사하세요": {"en": "Press and hold the link to copy", "zh": "长按链接复制"}, "설정을 받았습니다 — 자동 인식이 켜졌습니다": {"en": "Settings received — auto recognition is on", "zh": "已接收设置 — 自动识别已开启"}, "예비 저장본에서 ": {"en": "Restored ", "zh": "已从备用存档恢复 "}, "건을 복구했습니다": {"en": " record(s) from the backup copy", "zh": " 条记录"}};
 function TR(k){ const m=TRD[k]; return (m&&cfg.lang!=='ko'&&m[cfg.lang]!==undefined)?m[cfg.lang]:k; }
+const APP_VER='1.7.0';   /* 화면 위·아래에 함께 표시됩니다 */
 const $=i=>document.getElementById(i);
 let rows=[], draft=null, cfg={staff:'',key:'',model:'claude-sonnet-5'};
 
@@ -1208,6 +1220,22 @@ let syncing=false;
 function uid(){
   return (cfg.staff||'x').replace(/\s/g,'').slice(0,6)+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
 }
+/* 지금 접속해 있는 담당자를 보여 줍니다.
+   시트가 알려 준 목록을 그대로 그릴 뿐이라, 실패해도 다른 기능에 영향이 없습니다. */
+function paintPresence(list){
+  const box=$('presence'); if(!box)return;
+  if(!Array.isArray(list)||!list.length){ box.hidden=true; box.innerHTML=''; return; }
+  const me=(cfg.staff||'').trim();
+  box.hidden=false;
+  box.innerHTML='<b>'+esc(t('presH'))+'</b>'+list.map(x=>{
+    const nm=String(x.staff||'').trim(); if(!nm)return '';
+    const min=Math.max(0,Math.round((x.ago||0)/60));
+    const idle=min>=2;
+    const tail=idle?(' <span style="opacity:.6;font-weight:600">'+min+esc(t('presIdle'))+'</span>'):'';
+    return '<i class="'+(nm===me?'me':'')+(idle?' idle':'')+'">'+esc(nm)+(nm===me?' ('+esc(t('presMe'))+')':'')+tail+'</i>';
+  }).join('');
+}
+
 function pill(){
   const p=$('syncPill'); if(!p)return;
   if(!cfg.sync){p.hidden=true;return}
@@ -1231,7 +1259,7 @@ async function syncNow(quiet){
     const push=rows.filter(r=>r.dirty&&!r.imported).map(strip);
     const r=await fetch(cfg.sync,{method:'POST',
       headers:{'content-type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({push,since:cfg.lastPull||0})});
+      body:JSON.stringify({push,since:cfg.lastPull||0,me:(cfg.staff||'').trim()})});
     if(!r.ok)throw new Error(TR('서버 응답 ')+r.status);
     const d=await r.json();
     if(!d.ok)throw new Error(d.error||TR('서버 오류'));
@@ -1259,6 +1287,7 @@ async function syncNow(quiet){
         rows.push(rec); await dbPut(rec); added++;
       }
     }
+    try{ paintPresence(d.active) }catch(e){}
     cfg.lastPull=d.now||Date.now(); cfgSave();
     rows.sort((a,b)=>String(b.at).localeCompare(String(a.at)));
     syncing=false; render(); pill();
@@ -1290,6 +1319,22 @@ $('s-syncTest').addEventListener('click',async()=>{
     pill(); syncNow(true);
   }catch(e){ st.className='ai err'; st.textContent=TR('실패: ')+String(e.message||e).slice(0,90)+TR(' (배포 시 액세스 권한을 모든 사용자로 했는지 확인하세요)'); }
 });
+/* 시트를 새로 만들었거나 기록이 사라졌을 때, 폰에 있는 것을 통째로 다시 올립니다.
+   uid로 구분하므로 시트에 이미 있는 줄은 덮어써질 뿐 중복되지 않습니다. */
+$('s-resync').addEventListener('click',async()=>{
+  const st=$('syncStatus');
+  if(!cfg.sync){ st.className='ai err'; st.textContent=TR('먼저 주소를 연결하세요'); return; }
+  const mine=rows.filter(r=>!r.imported);
+  if(!mine.length){ st.className='ai err'; st.textContent=t('tNoRec'); return; }
+  if(!confirm(t('cReSync').replace('%n',mine.length)))return;
+  for(const r of mine){ r.dirty=true; if(!r.uid)r.uid=uid(); await dbPut(r); }
+  pill();
+  st.className='ai'; st.innerHTML='<span class="spin"></span>'+t('mConnChk');
+  const res=await syncNow(false);
+  st.className=res.ok?'ai on':'ai err';
+  st.textContent=res.ok?(t('tSyncOk')+' · '+mine.length):(TR('실패: ')+String(res.msg||'').slice(0,80));
+});
+
 $('s-syncNow').addEventListener('click',async()=>{
   if(!cfg.sync){toast(TR('먼저 주소를 연결하세요'));return}
   const res=await syncNow(false);
