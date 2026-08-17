@@ -434,7 +434,7 @@ section[hidden]{display:none}
     <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
-  <div class="ver">Ver 1.2.1</div>
+  <div class="ver">Ver 1.3.0</div>
 </section>
 </main>
 
@@ -511,6 +511,12 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  pSync:'연결하면 접수 기록이 자동으로 구글 시트에 올라가고, 다른 직원의 기록도 자동으로 내려받아 명부에 함께 표시됩니다. 인터넷이 끊겨도 폰에는 정상 저장되며, 연결되는 순간 밀린 기록이 알아서 올라갑니다.<br><br><b>사진은 올라가지 않습니다.</b> 용량이 커서 폰에만 보관됩니다.',
  pMerge:'직원이 내보낸 CSV 파일을 불러오면 이 폰의 명부에 함께 표시되고, 담당자별로 나눠 볼 수 있습니다. 사진은 따로 관리되므로 글자 정보만 합쳐집니다. 같은 기록을 두 번 불러와도 중복되지 않습니다.',
  pCalc:'계산 중…',bDiag:'저장소 진단',loading:'불러오는 중',phKey:'sk-ant-... (선택 사항)',
+ cBulk:'사진 %n장을 한 번에 명부에 넣습니다.\n회사명과 이름은 나중에 명부에서 수정할 수 있습니다.\n\n계속할까요?',
+ cEmptySave:'회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?',
+ cWipeAll:'기록 %n건과 사진을 모두 삭제합니다. 되돌릴 수 없습니다.\n\nCSV와 사진을 먼저 내보냈는지 확인하세요.',
+ cPrivate:'여기서 저장한 기록은 다른 브라우저에서 보이지 않습니다.\n시험용으로만 사용하세요.\n\n계속할까요?',
+ mChk:'확인 중…',mConnChk:'연결 확인 중…',mFileRead:'파일을 읽는 중…',
+ dow:'일,월,화,수,목,금,토',
  scanOnBtn:'자동 보정 켜짐 — 누르면 끕니다',scanOffBtn:'자동 보정 꺼짐 — 누르면 켭니다',
  cropOnBtn:'테두리 자동 잘라내기 켜짐 — 누르면 끕니다',cropOffBtn:'테두리 자동 잘라내기 꺼짐 — 누르면 켭니다',
  sCropH:'테두리 자동 잘라내기',
@@ -558,6 +564,12 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  pSync:'When connected, entries are uploaded to your Google Sheet automatically, and entries from other staff are downloaded into your list. Everything still saves on the phone when the internet drops, and pending entries upload as soon as you are back online.<br><br><b>Photos are not uploaded.</b> They are large, so they stay on the phone.',
  pMerge:'Load a CSV exported by another staff member and it appears in this phone\'s list, where you can view entries by staff. Photos are handled separately, so only the text is merged. Loading the same file twice will not create duplicates.',
  pCalc:'Calculating…',bDiag:'Storage check',loading:'Loading',phKey:'sk-ant-... (optional)',
+ cBulk:'%n photo(s) will be added to the list at once.\nYou can edit the company and name later.\n\nContinue?',
+ cEmptySave:'Company, name and notes are all empty. Save the photo only?',
+ cWipeAll:'This deletes all %n records and their photos. It cannot be undone.\n\nMake sure you exported the CSV and photos first.',
+ cPrivate:'Records saved here will not be visible in other browsers.\nUse this for testing only.\n\nContinue?',
+ mChk:'Checking…',mConnChk:'Checking connection…',mFileRead:'Reading the file…',
+ dow:'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
  scanOnBtn:'Auto cleanup ON — tap to turn off',scanOffBtn:'Auto cleanup OFF — tap to turn on',
  cropOnBtn:'Auto edge crop ON — tap to turn off',cropOffBtn:'Auto edge crop OFF — tap to turn on',
  sCropH:'Auto edge crop',
@@ -605,6 +617,12 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  pSync:'连接后，登记记录会自动上传到 Google 表格，其他员工的记录也会自动下载并显示在名单中。断网时仍可正常保存在手机上，恢复连接后会自动补传。<br><br><b>照片不会上传。</b>因体积较大，仅保存在手机中。',
  pMerge:'导入其他员工导出的 CSV 文件后，记录会显示在本手机的名单中，并可按负责人分类查看。照片单独管理，仅合并文字信息。重复导入同一文件也不会产生重复记录。',
  pCalc:'计算中…',bDiag:'存储诊断',loading:'载入中',phKey:'sk-ant-...（可选）',
+ cBulk:'将一次性把 %n 张照片加入名单。\n公司名和姓名之后可在名单中修改。\n\n继续吗？',
+ cEmptySave:'公司名·姓名·备注均为空。仅保存照片吗？',
+ cWipeAll:'将删除全部 %n 条记录及照片，无法恢复。\n\n请确认已先导出 CSV 和照片。',
+ cPrivate:'在此保存的记录在其他浏览器中不可见。\n仅供测试使用。\n\n继续吗？',
+ mChk:'检查中…',mConnChk:'检查连接中…',mFileRead:'正在读取文件…',
+ dow:'周日,周一,周二,周三,周四,周五,周六',
  scanOnBtn:'自动优化已开启 — 点击关闭',scanOffBtn:'自动优化已关闭 — 点击开启',
  cropOnBtn:'自动裁边已开启 — 点击关闭',cropOffBtn:'自动裁边已关闭 — 点击开启',
  sCropH:'自动裁边',
@@ -640,6 +658,8 @@ function applyLang(){
   const tb=$('toggleScan'); if(tb)tb.textContent=t(draft&&draft.scanOn?'scanOrig':'scanFix');
   const ey=$('s-eye'); if(ey)ey.textContent=t($('s-key').type==='password'?'bShow':'bHide');
   const wp=$('s-wipe'); if(wp)wp.textContent=t('bWipe');
+  /* 언어를 바꾸기 전에 떠 있던 안내 문구는 지웁니다 */
+  const tst=$('toast'); if(tst){tst.textContent=''; tst.classList.remove('on');}
 }
 
 const ITEMS=['친환경 특수지','습식PU','VIVI (PVC) 지레자','샘플 요청','견적 요청','해외 바이어','동종업계'];
@@ -713,7 +733,7 @@ function mirrorLoad(){
 
 /* 저장소 진단 */
 $('s-diag').addEventListener('click',async()=>{
-  const o=$('diagOut'); o.className='ai'; o.innerHTML='<span class="spin"></span>확인 중…';
+  const o=$('diagOut'); o.className='ai'; o.innerHTML='<span class="spin"></span>'+t('mChk');
   const L=[];
   L.push(TR('IndexedDB 사용 가능: ')+(('indexedDB' in window)?TR('예'):TR('아니오')));
   const ok=await openDB();
@@ -956,7 +976,7 @@ $('gal').addEventListener('change',async e=>{
   const files=[...(e.target.files||[])]; e.target.value='';
   if(!files.length)return;
   if(files.length===1){ try{ await startDraft(files[0]) }catch(err){toast(String(err))} return; }
-  if(!confirm(TR('사진 ')+files.length+'장을 한 번에 명부에 넣습니다.\n회사명과 이름은 나중에 명부에서 수정할 수 있습니다.\n\n계속할까요?'))return;
+  if(!confirm(t('cBulk').replace('%n',files.length)))return;
   await bulkImport(files);
 });
 
@@ -1076,7 +1096,7 @@ $('saveBtn').addEventListener('click',async()=>{
     photo:draft.blob,uid:uid(),updated:Date.now(),dirty:true};
   if(!rec.company&&!rec.name&&!rec.phone&&!rec.email&&!rec.memo){
     if(!draft.blob){toast(TR('내용을 입력하거나 사진을 넣어 주세요'));return;}
-    if(!confirm('회사명·이름·메모가 모두 비어 있습니다. 사진만 저장할까요?'))return;
+    if(!confirm(t('cEmptySave')))return;
   }
   rows.unshift(rec); filterStaff=''; const okw=await dbPut(rec); mirrorSave();
   if(!okw)toast(t('tNoStore'));
@@ -1213,7 +1233,7 @@ $('s-syncTest').addEventListener('click',async()=>{
   const st=$('syncStatus'), u=$('s-sync').value.trim();
   if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u)){
     st.className='ai err';st.textContent=TR('주소가 script.google.com 으로 시작하고 /exec 로 끝나야 합니다');return}
-  st.className='ai';st.innerHTML='<span class="spin"></span>연결 확인 중…';
+  st.className='ai';st.innerHTML='<span class="spin"></span>'+t('mConnChk');
   try{
     const r=await fetch(u,{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},
       body:JSON.stringify({push:[],since:Date.now()})});
@@ -1499,7 +1519,7 @@ function renderStats(){
   const box=$('stats'); if(!box)return;
   const d=new Date(), p=n=>String(n).padStart(2,'0');
   const todayStr=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
-  const wd=['일','월','화','수','목','금','토'][d.getDay()];
+  const wd=t('dow').split(',')[d.getDay()];
   const dn=$('todayDate'); if(dn)dn.textContent=todayStr.replace(/-/g,'.')+(cfg.lang==='ko'?(' ('+wd+')'):'');
   const base=visibleRows();
   const total=base.length;
@@ -1549,7 +1569,7 @@ $('impFile').addEventListener('change',async e=>{
   const f=e.target.files&&e.target.files[0]; e.target.value='';
   if(!f)return;
   const st=$('impStatus');
-  st.className='ai'; st.innerHTML='<span class="spin"></span>파일을 읽는 중…';
+  st.className='ai'; st.innerHTML='<span class="spin"></span>'+t('mFileRead');
   try{
     const text=await f.text();
     const t=parseCSV(text);
@@ -1687,7 +1707,7 @@ const MODEL_CANDIDATES=['claude-sonnet-5','claude-haiku-4-5-20251001','claude-op
 async function pingModel(key,model){
   const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
     headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model,max_tokens:10,messages:[{role:'user',content:'ok 이라고만 답하세요'}]})});
+    body:JSON.stringify({model,max_tokens:10,messages:[{role:'user',content:'reply with ok only'}]})});
   if(r.ok)return {ok:true};
   return {ok:false,status:r.status,text:(await r.text()).slice(0,200)};
 }
@@ -1699,7 +1719,7 @@ $('s-test').addEventListener('click',async()=>{
 
   const first=$('s-model').value.trim();
   const list=[...new Set([first,...MODEL_CANDIDATES].filter(Boolean))];
-  s.className='ai';s.innerHTML='<span class="spin"></span>확인 중…';
+  s.className='ai';s.innerHTML='<span class="spin"></span>'+t('mChk');
   let lastErr='';
   for(const m of list){
     s.innerHTML='<span class="spin"></span>'+m+TR(' 확인 중…');
@@ -1749,7 +1769,7 @@ $('s-scan').addEventListener('click',()=>{ cfg.scan=!cfg.scan; cfgSave(); paintS
 $('s-crop').addEventListener('click',()=>{ cfg.crop=(cfg.crop===false); cfgSave(); paintScanBtn(); toast(t(cfg.crop!==false?'cropOnBtn':'cropOffBtn')); });
 $('s-wipe').addEventListener('click',async()=>{
   if(!rows.length)return;
-  if(!confirm(TR('기록 ')+rows.length+'건과 사진을 모두 삭제합니다. 되돌릴 수 없습니다.\n\nCSV와 사진을 먼저 내보냈는지 확인하세요.'))return;
+  if(!confirm(t('cWipeAll').replace('%n',rows.length)))return;
   if(!confirm(TR('정말 삭제할까요?')))return;
   rows=[];await dbClear();render();usage();toast(TR('전체 삭제했습니다'));
 });
@@ -1868,7 +1888,7 @@ function applyInstallLink(){
     }
   });
   box.querySelector('.skip').addEventListener('click',()=>{
-    if(!confirm('여기서 저장한 기록은 크롬·사파리에서 보이지 않습니다.\n시험용으로만 사용하세요.\n\n계속할까요?'))return;
+    if(!confirm(t('cPrivate')))return;
     try{sessionStorage.setItem('skipInapp','1')}catch(e){}
     box.remove();
   });
