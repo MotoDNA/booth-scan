@@ -119,6 +119,7 @@ section[hidden]{display:none}
 .chips button{padding:9px 13px;border-radius:999px;background:var(--bg);font-size:.72rem;font-weight:600;color:var(--sub)}
 .chips button[aria-pressed=true]{background:var(--brand);color:#fff}
 .chips.books button[aria-pressed=true]{background:var(--dark);color:#fff}
+.chips.given button[aria-pressed=true]{background:#3E7AA6;color:#fff}
 .grade{display:flex;gap:8px}
 .grade button{flex:1;padding:13px 0;border-radius:11px;background:var(--bg);font-size:.72rem;font-weight:700;color:var(--sub)}
 .grade button[aria-pressed=true]{background:var(--soft);color:var(--brand);box-shadow:inset 0 0 0 1.5px var(--brand)}
@@ -320,7 +321,7 @@ section[hidden]{display:none}
     <div class="nophoto" id="noPhoto" hidden data-i18n="noPhoto">사진 없음 — 메모만 저장됩니다</div>
     <div class="ai" id="aiStatus"></div>
     <div class="fld"><label data-i18n="lCompany">회사명</label><input id="f-company" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" data-i18n-ph="phCompany" placeholder="예: 액티바코리아"></div>
-    <div class="fld"><label data-i18n="lName">성함</label><input id="f-name" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" data-i18n-ph="phName" placeholder="예: 최환준 / Hwanjun Choi"></div>
+    <div class="fld"><label data-i18n="lName">성함</label><input id="f-name" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" data-i18n-ph="phName" placeholder="예: 홍길동 / Gildong Hong"></div>
     <div class="fld"><label data-i18n="lTitle">직함</label><input id="f-title" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" data-i18n-ph="phTitle" placeholder="예: 부장"></div>
     <div class="fld two"><div><label data-i18n="lPhone">전화번호</label><input id="f-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="010-0000-0000"></div><div><label data-i18n="lEmail">이메일</label><input id="f-email" type="email" inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="name@company.com"></div></div>
     <div class="fld"><label data-i18n="lAddr">회사 주소</label><input id="f-addr" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" data-i18n-ph="phAddr" placeholder="예: 경기도 고양시 …"></div>
@@ -329,6 +330,9 @@ section[hidden]{display:none}
     </div>
     <div class="fld"><label data-i18n="lBooks">샘플북 요청</label>
       <div class="chips books" id="books"></div>
+    </div>
+    <div class="fld"><label data-i18n="lGiven">현장에서 지급한 샘플북</label>
+      <div class="chips given" id="given"></div>
     </div>
     <div class="fld" id="specWrap" hidden><label data-i18n="lSpec">샘플북 속지 품번</label><input id="f-spec" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-i18n-ph="phSpec" placeholder="W1G, W2K등 품번 또는 품명 기입"></div>
     <div class="fld"><label data-i18n="lMemo">상담 메모</label><textarea id="f-memo" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-i18n-ph="phMemo" placeholder="샘플 요청, 단가 문의, 재방문 약속 등"></textarea></div>
@@ -383,7 +387,7 @@ section[hidden]{display:none}
   <div class="setrow">
     <h4 data-i18n="sStaffH">담당자 이름</h4>
     <p data-i18n="sStaffP">여러 명이 나눠 쓸 때 누가 받은 리드인지 구분합니다.</p>
-    <input id="s-staff" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-i18n-ph="phStaff" placeholder="예: 최환준">
+    <input id="s-staff" type="text" lang="ko" inputmode="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" data-i18n-ph="phStaff" placeholder="예: 홍길동">
     <button id="s-staffSave" data-i18n="bSave">저장</button>
   </div>
   <div class="setrow">
@@ -444,7 +448,7 @@ section[hidden]{display:none}
     <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
-  <div class="ver">Ver 1.4.2</div>
+  <div class="ver">Ver 1.5.1</div>
 </section>
 </main>
 
@@ -488,7 +492,7 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  bulkTitle:'사진을 불러오는 중…',rePhoto:'사진 다시 찍기',rePick:'사진첩에서 고르기',
  scanOrig:'원본 보기',scanFix:'스캔 보정',delPhoto:'사진 삭제',noPhoto:'사진 없음 — 메모만 저장됩니다',
  lCompany:'회사명',lName:'성함',lTitle:'직함',lPhone:'전화번호',lEmail:'이메일',lAddr:'회사 주소',
- lItems:'관심 품목',lBooks:'샘플북 요청',lMemo:'상담 메모',lGrade:'등급',
+ lItems:'관심 품목',lBooks:'샘플북 요청',lGiven:'현장에서 지급한 샘플북',lMemo:'상담 메모',lGrade:'등급',
  selAll:'전체 선택',selNone:'선택 해제',selDel:'선택 삭제',cDelSel:'선택한 %n건을 삭제합니다. 사진도 함께 지워지며 되돌릴 수 없습니다.',tDelSel:'%n건을 삭제했습니다',selCnt:'개 선택됨',
  bExport:'내보내기',exCsv:'CSV 내보내기',exCard:'정보카드 내보내기',exVcf:'연락처로 저장',dVcf:'연락처 저장',vcfDone:'연락처 파일을 만들었습니다',vcfHint:'파일을 열면 연락처에 추가할 수 있습니다',
  cardMaking:'정보카드를 만드는 중…',cardDone:'정보카드를 저장했습니다',
@@ -497,8 +501,8 @@ ko:{sub:'ACTIVA KOREA · 부스 접수대',staffLbl:'담당자',unset:'미설정
  lSpec:'샘플북 속지 품번',phSpec:'W1G, W2K등 품번 또는 품명 기입',
  gA:'A 즉시상담',gB:'B 관심',gC:'C 단순방문',save:'명부에 접수',saveEdit:'수정 내용 저장',cancel:'취소하고 버리기',
  note:'사진과 메모는 이 휴대폰 안에만 저장됩니다. 매일 마감 후 CSV 내보내기로 백업하세요.',
- phCompany:'예: 액티바코리아',phName:'예: 최환준 / Hwanjun Choi',phTitle:'예: 부장',
- phAddr:'예: 경기도 고양시 …',phMemo:'샘플 요청, 단가 문의, 재방문 약속 등',phStaff:'예: 최환준',
+ phCompany:'예: 액티바코리아',phName:'예: 홍길동 / Gildong Hong',phTitle:'예: 부장',
+ phAddr:'예: 경기도 고양시 …',phMemo:'샘플 요청, 단가 문의, 재방문 약속 등',phStaff:'예: 홍길동',
  phModel:'비워 두면 자동으로 찾습니다',
  heroKick:'NEW VISITOR',heroTitle:'명함을 촬영해주세요',heroSub:'명함이나 방문증을 프레임 안에 맞춰주세요.',tipT:'TIP',tipS:'촬영하면 회사명과 이름이 자동으로 인식되어 명부에 저장됩니다.',today:'TODAY',phSearch:'이름, 회사명, 연락처 검색',stTotal:'TOTAL',stNew:'NEW',stFollow:'FOLLOW-UP',stSample:'SAMPLE',sLangH:'언어',sFontH:'글자 크기',fSmall:'보통',fMid:'크게',fBig:'아주 크게',sStaffH:'담당자 이름',sStaffP:'여러 명이 나눠 쓸 때 누가 받은 리드인지 구분합니다. CSV에 함께 기록됩니다.',
  sAiH:'자동 인식 (선택)',sLinkH:'직원용 설치 링크',sScanH:'스캔 보정',sSyncH:'실시간 공유 (구글 시트)',
@@ -542,7 +546,7 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  bulkTitle:'Importing photos…',rePhoto:'Retake photo',rePick:'Pick from photos',
  scanOrig:'View original',scanFix:'Scan cleanup',delPhoto:'Delete photo',noPhoto:'No photo — notes only',
  lCompany:'Company',lName:'Name',lTitle:'Job title',lPhone:'Phone',lEmail:'Email',lAddr:'Company address',
- lItems:'Products of interest',lBooks:'Sample book request',lMemo:'Notes',lGrade:'Priority',
+ lItems:'Products of interest',lBooks:'Sample book request',lGiven:'Sample books handed over',lMemo:'Notes',lGrade:'Priority',
  selAll:'Select all',selNone:'Clear',selDel:'Delete selected',cDelSel:'Delete %n selected records? Photos will be removed too and this cannot be undone.',tDelSel:'%n records deleted',selCnt:' selected',
  bExport:'Export',exCsv:'Export CSV',exCard:'Export info cards',exVcf:'Save as contacts',dVcf:'Save contact',vcfDone:'Contact file created',vcfHint:'Open the file to add it to your contacts',
  cardMaking:'Creating info cards…',cardDone:'Info cards saved',
@@ -551,8 +555,8 @@ en:{sub:'ACTIVA KOREA · Booth Desk',staffLbl:'Staff',unset:'Not set',scans:'ENT
  lSpec:'Sample book insert codes',phSpec:'Enter codes or names, e.g. W1G, W2K',
  gA:'A Hot lead',gB:'B Interested',gC:'C Visitor',save:'Add to list',saveEdit:'Save changes',cancel:'Discard',
  note:'Photos and notes stay on this phone only. Export a CSV at the end of each day.',
- phCompany:'e.g. Activa Korea',phName:'e.g. Hwanjun Choi',phTitle:'e.g. Manager',
- phAddr:'e.g. Goyang-si, Gyeonggi-do',phMemo:'Sample request, pricing question, follow-up',phStaff:'e.g. Hwanjun',
+ phCompany:'e.g. Activa Korea',phName:'e.g. Gildong Hong',phTitle:'e.g. Manager',
+ phAddr:'e.g. Goyang-si, Gyeonggi-do',phMemo:'Sample request, pricing question, follow-up',phStaff:'e.g. Gildong',
  phModel:'Leave blank to detect automatically',
  heroKick:'NEW VISITOR',heroTitle:'Photograph a card',heroSub:'Fit the card or badge inside the frame.',tipT:'TIP',tipS:'The company and name are recognised automatically and saved to your list.',today:'TODAY',phSearch:'Search name, company, contact',stTotal:'TOTAL',stNew:'NEW',stFollow:'FOLLOW-UP',stSample:'SAMPLE',sLangH:'Language',sFontH:'Text size',fSmall:'Normal',fMid:'Large',fBig:'Extra large',sStaffH:'Staff name',sStaffP:'Identifies who captured each lead when several people share the app. Included in the CSV.',
  sAiH:'Auto-recognition (optional)',sLinkH:'Setup link for staff',sScanH:'Scan cleanup',sSyncH:'Live sharing (Google Sheets)',
@@ -596,7 +600,7 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  bulkTitle:'正在导入照片…',rePhoto:'重新拍摄',rePick:'从相册选择',
  scanOrig:'查看原图',scanFix:'扫描优化',delPhoto:'删除照片',noPhoto:'无照片 — 仅保存备注',
  lCompany:'公司名称',lName:'姓名',lTitle:'职务',lPhone:'电话',lEmail:'邮箱',lAddr:'公司地址',
- lItems:'感兴趣产品',lBooks:'索取样本册',lMemo:'洽谈备注',lGrade:'等级',
+ lItems:'感兴趣产品',lBooks:'索取样本册',lGiven:'现场交付的样本册',lMemo:'洽谈备注',lGrade:'等级',
  selAll:'全选',selNone:'取消选择',selDel:'删除所选',cDelSel:'将删除所选 %n 条记录，照片也会一并删除且无法恢复。',tDelSel:'已删除 %n 条记录',selCnt:' 项已选',
  bExport:'导出',exCsv:'导出 CSV',exCard:'导出信息卡',exVcf:'保存为联系人',dVcf:'保存联系人',vcfDone:'已生成联系人文件',vcfHint:'打开文件即可添加到通讯录',
  cardMaking:'正在生成信息卡…',cardDone:'已保存信息卡',
@@ -605,8 +609,8 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  lSpec:'样本册内页品号',phSpec:'填写品号或品名，例如 W1G、W2K',
  gA:'A 立即洽谈',gB:'B 有意向',gC:'C 普通参观',save:'登记到名录',saveEdit:'保存修改',cancel:'取消并丢弃',
  note:'照片和备注仅保存在本手机中。请每天闭馆后导出 CSV 备份。',
- phCompany:'例：Activa Korea',phName:'例：崔焕俊',phTitle:'例：部长',
- phAddr:'例：京畿道高阳市',phMemo:'索取样品、询价、再次拜访约定等',phStaff:'例：崔焕俊',
+ phCompany:'例：Activa Korea',phName:'例：洪吉童',phTitle:'例：部长',
+ phAddr:'例：京畿道高阳市',phMemo:'索取样品、询价、再次拜访约定等',phStaff:'例：洪吉童',
  phModel:'留空将自动选择',
  heroKick:'NEW VISITOR',heroTitle:'请拍摄名片',heroSub:'请将名片或参观证放入取景框内。',tipT:'提示',tipS:'拍摄后会自动识别公司名和姓名并存入名录。',today:'TODAY',phSearch:'搜索姓名、公司、联系方式',stTotal:'总计',stNew:'今日',stFollow:'跟进',stSample:'样本',sLangH:'语言',sFontH:'字体大小',fSmall:'标准',fMid:'大',fBig:'特大',sStaffH:'负责人姓名',sStaffP:'多人共用时用于区分由谁接待。会一并记入 CSV。',
  sAiH:'自动识别（可选）',sLinkH:'员工安装链接',sScanH:'扫描优化',sSyncH:'实时共享（Google 表格）',
@@ -643,12 +647,12 @@ zh:{sub:'ACTIVA KOREA · 展位登记台',staffLbl:'负责人',unset:'未设置'
  syncOn:'已共享',syncWait:'待发送',syncOff:'离线',syncing:'发送中'}
 };
 const ITEM_T={
- '친환경 특수지':{en:'Eco specialty paper',zh:'环保特种纸'},
- '습식PU':{en:'Wet-process PU',zh:'湿法PU'},
- 'VIVI (PVC) 지레자':{en:'VIVI (PVC) leatherette',zh:'VIVI (PVC) 人造革'},
- '샘플 요청':{en:'Sample request',zh:'索取样品'},
- '견적 요청':{en:'Quote request',zh:'索取报价'},
- '해외 바이어':{en:'Overseas buyer',zh:'海外买家'},
+ 'MUSE (PU)':{en:'MUSE (PU)',zh:'MUSE (PU)'},
+ 'PATRIX (특수지)':{en:'PATRIX (specialty paper)',zh:'PATRIX（特种纸）'},
+ 'VIVI (PVC코팅지)':{en:'VIVI (PVC-coated)',zh:'VIVI（PVC 涂层纸）'},
+ '샘플요청':{en:'Sample request',zh:'索取样品'},
+ '견적요청':{en:'Quote request',zh:'索取报价'},
+ '해외바이어':{en:'Overseas buyer',zh:'海外买家'},
  '동종업계':{en:'Same industry',zh:'同行'}
 };
 function t(k){ const L=I18N[cfg.lang]||I18N.ko; return (L[k]!==undefined?L[k]:I18N.ko[k])||''; }
@@ -664,7 +668,7 @@ function applyLang(){
   if(typeof applyFont==='function')applyFont();
   if(typeof paintScanBtn==='function')paintScanBtn();
   if(typeof paintKeyState==='function')paintKeyState();
-  if(typeof renderChips==='function'){renderChips();renderBooks();}
+  if(typeof renderChips==='function'){renderChips();renderBooks();renderGiven();}
   if(typeof render==='function')render();
   if(typeof pill==='function')pill();
   const sb=$('saveBtn'); if(sb)sb.textContent=t(draft&&draft.editId?'saveEdit':'save');
@@ -675,10 +679,13 @@ function applyLang(){
   const tst=$('toast'); if(tst){tst.textContent=''; tst.classList.remove('on');}
 }
 
-const ITEMS=['친환경 특수지','습식PU','VIVI (PVC) 지레자','샘플 요청','견적 요청','해외 바이어','동종업계'];
-const BOOKS=['MUSE 1','MUSE 2','MUSE 3','PATRIX','VIVI','VIVI (VE)','FIGARO 핸드북','샘플북 속지'];
+const ITEMS=['MUSE (PU)','PATRIX (특수지)','VIVI (PVC코팅지)','샘플요청','견적요청','해외바이어','동종업계'];
+const BOOKS=['MUSE 1','MUSE 2','MUSE 3','MUSE(KOREA)','PATRIX','VIVI','VIVI (VE)','FIGARO 핸드북'];
+/* 현장에서 실제로 건넨 샘플북 */
+const GIVEN=['MUSE 1','MUSE 2','MUSE 3','MUSE(KOREA)','PATRIX','VIVI','VIVI (VE)','FIGARO 핸드북','샘플북 속지'];
 const SPEC_BOOK='샘플북 속지';
 const BOOK_T={'MUSE 1':{en:'MUSE 1',zh:'MUSE 1'},'MUSE 2':{en:'MUSE 2',zh:'MUSE 2'},'MUSE 3':{en:'MUSE 3',zh:'MUSE 3'},
+ 'MUSE(KOREA)':{en:'MUSE (KOREA)',zh:'MUSE（KOREA）'},
  'PATRIX':{en:'PATRIX',zh:'PATRIX'},'VIVI':{en:'VIVI',zh:'VIVI'},'VIVI (VE)':{en:'VIVI (VE)',zh:'VIVI (VE)'},
  'FIGARO 핸드북':{en:'FIGARO handbook',zh:'FIGARO 手册'},'샘플북 속지':{en:'Sample book inserts',zh:'样本册内页'}};
 function bookLabel(id){ const m=BOOK_T[id]; return (m&&cfg.lang!=='ko'&&m[cfg.lang])?m[cfg.lang]:id; }
@@ -952,12 +959,12 @@ $('pickBtn').addEventListener('click',()=>$('gal').click());
 
 /* 명함·방문증이 없을 때 손으로만 입력합니다 */
 $('typeBtn').addEventListener('click',()=>{
-  draft={orig:null,scanned:null,blob:null,scanOn:false,grade:'',items:[],books:[],editId:null};
+  draft={orig:null,scanned:null,blob:null,scanOn:false,grade:'',items:[],books:[],given:[],editId:null};
   $('draft').hidden=false; showPhoto();
   ['f-company','f-name','f-title','f-phone','f-email','f-addr','f-spec','f-memo'].forEach(i=>$(i).value='');
   $('specWrap').hidden=true;
   $('saveBtn').textContent=t('save');
-  renderChips(); renderBooks(); renderGrade();
+  renderChips(); renderBooks(); renderGiven(); renderGrade();
   const st=$('aiStatus'); if(st){ st.className='ai'; st.textContent=t('aiManual'); }
   $('draft').scrollIntoView({behavior:'smooth',block:'start'});
   setTimeout(()=>{ const c=$('f-company'); if(c)c.focus(); },350);
@@ -967,26 +974,26 @@ async function startDraft(file){
   let orig=await shrink(file);
   if(cfg.crop!==false) orig=await autoCrop(orig);
   const scanned=cfg.scan?await scanify(orig):null;
-  draft={orig,scanned,blob:(scanned||orig),scanOn:!!scanned,grade:'',items:[],books:[],editId:null};
+  draft={orig,scanned,blob:(scanned||orig),scanOn:!!scanned,grade:'',items:[],books:[],given:[],editId:null};
   $('draft').hidden=false; showPhoto();
   ['f-company','f-name','f-title','f-phone','f-email','f-addr','f-spec','f-memo'].forEach(i=>$(i).value='');
   $('specWrap').hidden=true;
   $('saveBtn').textContent=t('save');
-  renderChips();renderBooks();renderGrade();
+  renderChips();renderBooks();renderGiven();renderGrade();
   $('draft').scrollIntoView({behavior:'smooth',block:'start'});
   readBadge(orig);
 }
 
 /* 명부에서 불러와 수정 */
 function startEdit(r){
-  draft={blob:r.photo,orig:r.photo,scanned:null,scanOn:false,grade:r.grade||'',items:[...(r.items||[])],books:[...(r.books||[])],editId:r.id};
+  draft={blob:r.photo,orig:r.photo,scanned:null,scanOn:false,grade:r.grade||'',items:[...(r.items||[])],books:[...(r.books||[])],given:[...(r.given||[])],editId:r.id};
   $('draft').hidden=false; showPhoto();
   $('f-company').value=r.company||'';$('f-name').value=r.name||'';$('f-title').value=r.title||'';
   $('f-phone').value=r.phone||'';$('f-email').value=r.email||'';$('f-addr').value=r.addr||'';
   $('f-spec').value=r.spec||'';$('f-memo').value=r.memo||'';
   $('aiStatus').className='ai';$('aiStatus').textContent=t('aiEdit');
   $('saveBtn').textContent=t('saveEdit');
-  renderChips();renderBooks();renderGrade();showSpec();
+  renderChips();renderBooks();renderGiven();renderGrade();showSpec();
   $('f-spec').value=r.spec||'';
   $('t-new').click();
   $('draft').scrollIntoView({behavior:'smooth',block:'start'});
@@ -1019,7 +1026,7 @@ async function bulkImport(files){
       const raw2=(cfg.crop!==false)?await autoCrop(raw):raw;
       const blob=cfg.scan?await scanify(raw2):raw2;
       const rec={id:Date.now()+done,at:nowStr(),staff:cfg.staff||'',
-        company:'',name:'',title:'',phone:'',email:'',addr:'',items:[],books:[],grade:'',memo:'',spec:'',photo:blob,uid:uid(),updated:Date.now(),dirty:true};
+        company:'',name:'',title:'',phone:'',email:'',addr:'',items:[],books:[],given:[],grade:'',memo:'',spec:'',photo:blob,uid:uid(),updated:Date.now(),dirty:true};
       if(cfg.key){
         msg.textContent=TR('방문증 글자를 읽는 중…');
         const got=await readBadgeQuiet(raw);
@@ -1065,6 +1072,18 @@ function renderChips(){
   $('chips').innerHTML=ITEMS.map(i=>
     `<button data-i="${esc(i)}" aria-pressed="${!!(draft&&draft.items.includes(i))}">${esc(itemLabel(i))}</button>`).join('');
 }
+function renderGiven(){
+  $('given').innerHTML=GIVEN.map(i=>
+    `<button data-i="${esc(i)}" aria-pressed="${!!(draft&&(draft.given||[]).includes(i))}">${esc(bookLabel(i))}</button>`).join('');
+}
+$('given').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b||!draft)return;
+  const i=b.dataset.i;
+  draft.given=draft.given||[];
+  draft.given=draft.given.includes(i)?draft.given.filter(x=>x!==i):[...draft.given,i];
+  renderGiven(); showSpec();
+});
+
 function renderBooks(){
   $('books').innerHTML=BOOKS.map(i=>
     `<button data-i="${esc(i)}" aria-pressed="${!!(draft&&(draft.books||[]).includes(i))}">${esc(bookLabel(i))}</button>`).join('');
@@ -1087,7 +1106,7 @@ $('books').addEventListener('click',e=>{
 });
 /* 샘플북 속지를 고르면 품번 입력칸이 나타납니다 */
 function showSpec(){
-  const on=!!(draft&&(draft.books||[]).includes(SPEC_BOOK));
+  const on=!!(draft&&(((draft.books||[]).includes(SPEC_BOOK))||((draft.given||[]).includes(SPEC_BOOK))));
   $('specWrap').hidden=!on;
   if(on)setTimeout(()=>$('f-spec').focus(),80);
   else $('f-spec').value='';
@@ -1109,7 +1128,7 @@ $('saveBtn').addEventListener('click',async()=>{
     const r=rows.find(x=>x.id===draft.editId);
     if(r){
       r.company=company;r.name=name;r.title=title;r.phone=phone;r.email=email;r.addr=addr;r.memo=memo;
-      r.items=draft.items;r.books=draft.books||[];r.grade=draft.grade;r.spec=spec;
+      r.items=draft.items;r.books=draft.books||[];r.given=draft.given||[];r.grade=draft.grade;r.spec=spec;
       r.uid=r.uid||uid(); r.updated=Date.now(); r.dirty=true;
       await dbPut(r); mirrorSave(); pill(); if(cfg.sync)syncNow(true);
     }
@@ -1118,7 +1137,7 @@ $('saveBtn').addEventListener('click',async()=>{
   }
 
   const rec={id:Date.now(),at:nowStr(),staff:cfg.staff||'',
-    company,name,title,phone,email,addr,spec,items:draft.items,books:draft.books||[],grade:draft.grade,memo,
+    company,name,title,phone,email,addr,spec,items:draft.items,books:draft.books||[],given:draft.given||[],grade:draft.grade,memo,
     photo:draft.blob,uid:uid(),updated:Date.now(),dirty:true};
   if(!rec.company&&!rec.name&&!rec.phone&&!rec.email&&!rec.memo){
     if(!draft.blob){toast(TR('내용을 입력하거나 사진을 넣어 주세요'));return;}
@@ -1321,6 +1340,7 @@ function openDetail(r){
   detailId=r.id;
   const items=(r.items||[]).map(itemLabel).join(', ');
   const books=(r.books||[]).map(bookLabel).join(', ');
+  const given=(r.given||[]).map(bookLabel).join(', ');
   const gmap={A:t('gA'),B:t('gB'),C:t('gC')};
   $('dBody').innerHTML=
     (r.photo?`<img src="${durl(r.photo)}" alt="badge">`:'')+
@@ -1331,6 +1351,7 @@ function openDetail(r){
     drow(t('lAddr'),r.addr)+
     drow(t('lItems'),items)+
     drow(t('lBooks'),books)+
+    drow(t('lGiven'),given)+
     (r.spec?drow(t('lSpec'),r.spec):'')+
     drow(t('lMemo'),r.memo)+
     drow(t('lGrade'),gmap[r.grade]||'')+
@@ -1423,6 +1444,7 @@ async function cardImage(r,no){
   rowOut(t('lAddr'),r.addr);
   rowOut(t('lItems'),(r.items||[]).map(itemLabel).join(', '));
   rowOut(t('lBooks'),(r.books||[]).map(bookLabel).join(', '));
+  rowOut(t('lGiven'),(r.given||[]).map(bookLabel).join(', '));
   rowOut(t('lSpec'),r.spec);
   rowOut(t('lGrade'),gmap[r.grade]||'');
 
@@ -1551,7 +1573,7 @@ function renderStats(){
   const total=base.length;
   const newT=base.filter(r=>String(r.at||'').startsWith(todayStr)).length;
   const follow=base.filter(r=>r.grade==='A').length;
-  const sample=base.filter(r=>(r.books||[]).length>0).length;
+  const sample=base.filter(r=>((r.books||[]).length+(r.given||[]).length)>0).length;
   box.innerHTML=[[total,'stTotal'],[newT,'stNew'],[follow,'stFollow'],[sample,'stSample']]
     .map(([v,k])=>`<div><b>${v}</b><span>${t(k)}</span></div>`).join('');
 }
@@ -1604,7 +1626,7 @@ $('impFile').addEventListener('change',async e=>{
     /* 열 이름은 영문이 기본입니다. 예전에 내보낸 한글 머리글 파일도 함께 읽습니다. */
     const ALIAS={No:['번호'],Timestamp:['접수시각'],Staff:['담당자'],Company:['회사명'],
       Name:['성함','이름직함'],Title:['직함'],Phone:['전화번호'],Email:['이메일'],
-      Address:['회사주소'],Grade:['등급'],Interests:['관심품목'],SampleBooks:['샘플북요청'],
+      Address:['회사주소'],Grade:['등급'],Interests:['관심품목'],SampleBooks:['샘플북요청'],GivenBooks:['지급샘플북'],
       InsertCode:['속지품번'],Memo:['메모'],PhotoFile:['사진파일명']};
     const col=n=>{
       let k=head.indexOf(n); if(k>=0)return k;
@@ -1623,6 +1645,7 @@ $('impFile').addEventListener('change',async e=>{
         grade:g('Grade'), spec:g('InsertCode'), memo:g('Memo'),
         items:g('Interests')?g('Interests').split(' / ').filter(Boolean):[],
         books:g('SampleBooks')?g('SampleBooks').split(' / ').filter(Boolean):[],
+        given:g('GivenBooks')?g('GivenBooks').split(' / ').filter(Boolean):[],
         photo:null, imported:true};
       if(!rec.at&&!rec.company&&!rec.name)continue;
       if(seen.has(key(rec))){dup++;continue}
@@ -1941,7 +1964,7 @@ paintBar('new');
     }
   }
   mirrorSave();
-  render(); usage(); renderChips(); renderBooks(); paintScanBtn(); paintBar('new');
+  render(); usage(); renderChips(); renderBooks(); renderGiven(); paintScanBtn(); paintBar('new');
   $('s-sync').value=cfg.sync||''; pill();
   if(cfg.sync)syncNow(true);
   paintKeyState();
