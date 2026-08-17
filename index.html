@@ -181,6 +181,7 @@ section[hidden]{display:none}
 .slip .tags i{font-style:normal;font-size:.62rem;font-weight:700;padding:5px 9px;border-radius:7px;background:var(--bg);color:var(--sub)}
 .slip .tags i.g{background:var(--soft);color:var(--brand)}
 .slip .tags i.b{background:#EFEBE6;color:var(--ink)}
+.slip .tags i.gv{background:#E4EDF4;color:#2F5F80}
 .slip .tags i.im{background:none;color:var(--mut);box-shadow:inset 0 0 0 1px var(--line)}
 .slip .m{margin-top:9px;font-size:.72rem;color:var(--sub);line-height:1.55;word-break:break-word;display:flex;gap:6px}
 .slip .m::before{content:"▤";color:var(--mut);font-size:.66rem;flex:0 0 auto}
@@ -448,7 +449,7 @@ section[hidden]{display:none}
     <div class="ai" id="diagOut"></div>
     <button class="sec" id="s-wipe" style="border-color:#C8342A;color:#C8342A">전체 기록 삭제</button>
   </div>
-  <div class="ver">Ver 1.5.1</div>
+  <div class="ver">Ver 1.5.2</div>
 </section>
 </main>
 
@@ -1220,7 +1221,7 @@ function pill(){
 function strip(r){
   return {uid:r.uid,at:r.at,staff:r.staff,company:r.company,name:r.name,title:r.title,
     phone:r.phone,email:r.email,addr:r.addr,spec:r.spec||'',grade:r.grade,items:r.items||[],
-    books:r.books||[],memo:r.memo,updated:r.updated||Date.now()};
+    books:r.books||[],given:r.given||[],memo:r.memo,updated:r.updated||Date.now()};
 }
 async function syncNow(quiet){
   if(!cfg.sync||syncing)return {ok:false};
@@ -1246,14 +1247,14 @@ async function syncNow(quiet){
       if(cur){
         if(!cur.dirty&&(o.updated||0)>(cur.updated||0)){
           Object.assign(cur,{at:o.at,staff:o.staff,company:o.company,name:o.name,title:o.title,
-            phone:o.phone,email:o.email,addr:o.addr,grade:o.grade,items:o.items,books:o.books,
+            phone:o.phone,email:o.email,addr:o.addr,grade:o.grade,items:o.items,books:o.books,given:o.given||[],
             memo:o.memo,updated:o.updated,spec:(o.spec!==undefined?o.spec:cur.spec)});
           await dbPut(cur);
         }
       }else{
         const rec={id:Date.now()+Math.floor(Math.random()*9999),uid:o.uid,at:o.at,staff:o.staff,
           company:o.company,name:o.name,title:o.title,phone:o.phone,email:o.email,addr:o.addr,
-          grade:o.grade,items:o.items||[],books:o.books||[],memo:o.memo,spec:o.spec||'',updated:o.updated,
+          grade:o.grade,items:o.items||[],books:o.books||[],given:o.given||[],memo:o.memo,spec:o.spec||'',updated:o.updated,
           photo:null,imported:true,dirty:false};
         rows.push(rec); await dbPut(rec); added++;
       }
@@ -1478,6 +1479,7 @@ function makeVCard(r){
     r.company?('['+t('lCompany')+'] '+r.company):'',
     (r.items||[]).length?('['+t('lItems')+'] '+(r.items||[]).map(itemLabel).join(', ')):'',
     (r.books||[]).length?('['+t('lBooks')+'] '+(r.books||[]).map(bookLabel).join(', ')):'',
+    (r.given||[]).length?('['+t('lGiven')+'] '+(r.given||[]).map(bookLabel).join(', ')):'',
     r.spec?('['+t('lSpec')+'] '+r.spec):'',
     r.grade?('['+t('lGrade')+'] '+(gmap[r.grade]||r.grade)):'',
     r.memo?('['+t('lMemo')+'] '+r.memo):'',
@@ -1696,7 +1698,7 @@ function render(){
         <h3 class="tapzone">${esc(r.company||t('noName'))}</h3>
         <div class="sub">${esc([r.name,r.title].filter(Boolean).join(' ')||'—')}</div>
         ${(r.phone||r.email)?`<div class="contact">${r.phone?`<a href="tel:${esc(r.phone.replace(/[^0-9+]/g,''))}">${esc(r.phone)}</a>`:''}${r.email?`<a href="mailto:${esc(r.email)}">${esc(r.email)}</a>`:''}</div>`:''}
-        <div class="tags">${r.grade?`<i class="g">${r.grade}</i>`:''}${(r.items||[]).map(i=>`<i>${esc(itemLabel(i))}</i>`).join('')}${(r.books||[]).map(i=>`<i class="b">${esc(bookLabel(i))}</i>`).join('')}${r.imported?`<i class="im">${t('imported')}</i>`:''}</div>
+        <div class="tags">${r.grade?`<i class="g">${r.grade}</i>`:''}${(r.items||[]).map(i=>`<i>${esc(itemLabel(i))}</i>`).join('')}${(r.books||[]).map(i=>`<i class="b">${esc(bookLabel(i))}</i>`).join('')}${(r.given||[]).map(i=>`<i class="gv">✓${esc(bookLabel(i))}</i>`).join('')}${r.imported?`<i class="im">${t('imported')}</i>`:''}</div>
         ${r.spec?`<div class="m"><b>${t('lSpec')}</b> ${esc(r.spec)}</div>`:''}
         ${r.memo?`<div class="m">${esc(r.memo)}</div>`:''}
         <div class="acts"><button class="edit">${t('edit')}</button><button class="del">${t('del')}</button></div>
@@ -1832,8 +1834,8 @@ $('exCsv').addEventListener('click',()=>{
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const list=[...targetRows()].reverse();
   if(!list.length){toast(t('tNoRec'));return}
-  const csv='\uFEFF'+['No,Timestamp,Staff,Company,Name,Title,Phone,Email,Address,Grade,Interests,SampleBooks,InsertCode,Memo,PhotoFile']
-    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.title,r.phone,r.email,r.addr,r.grade,(r.items||[]).join(' / '),(r.books||[]).join(' / '),r.spec,r.memo,
+  const csv='\uFEFF'+['No,Timestamp,Staff,Company,Name,Title,Phone,Email,Address,Grade,Interests,SampleBooks,GivenBooks,InsertCode,Memo,PhotoFile']
+    .concat(list.map((r,i)=>[i+1,r.at,r.staff,r.company,r.name,r.title,r.phone,r.email,r.addr,r.grade,(r.items||[]).join(' / '),(r.books||[]).join(' / '),(r.given||[]).join(' / '),r.spec,r.memo,
       pad(i+1)+'_'+(r.company||TR('무명')).replace(/[\\/:*?"<>|]/g,'')+'.jpg'].map(q).join(',')))
     .join('\r\n');
   dl(new Blob([csv],{type:'text/csv;charset=utf-8'}),'ACTIVAKOREA_Leads_'+(cfg.staff||'담당자')+'_'+today()+'.csv');
